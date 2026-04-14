@@ -6,74 +6,120 @@ import locationCenter from "@/assets/location-center.webp";
 import locationIalyssos from "@/assets/location-ialyssos.jpg";
 import heroImage from "@/assets/hero-barbershop.jpg";
 
-const centerImages = [
-  { src: locationCenter, alt: "Street Barbers Center storefront" },
-  { src: shopCenter, alt: "Street Barbers Center interior" },
-  { src: heroImage, alt: "Street Barbers team at work" },
-];
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
+};
 
-const ialyssosImages = [
-  { src: locationIalyssos, alt: "Street Barbers Ialyssos storefront" },
-  { src: shopIalyssos, alt: "Street Barbers Ialyssos interior" },
-  { src: teamIalyssos, alt: "Street Barbers Ialyssos team" },
-];
-
-const GalleryGroup = ({
-  title,
-  images,
-  delayOffset = 0,
+const GalleryImage = ({
+  src,
+  alt,
+  className = "",
+  index = 0,
 }: {
-  title: string;
-  images: { src: string; alt: string }[];
-  delayOffset?: number;
+  src: string;
+  alt: string;
+  className?: string;
+  index?: number;
 }) => (
-  <div className="space-y-6">
-    <h3 className="font-display text-2xl md:text-3xl tracking-wider text-muted-foreground text-center">
-      {title}
-    </h3>
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
-      {images.map((img, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, scale: 0.97 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: (delayOffset + i) * 0.08, duration: 0.5 }}
-          className="aspect-square overflow-hidden group cursor-pointer"
-        >
-          <img
-            src={img.src}
-            alt={img.alt}
-            loading="lazy"
-            className="w-full h-full object-cover grayscale contrast-[1.15] brightness-95 group-hover:scale-110 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 transition-all duration-700 ease-out"
-          />
-        </motion.div>
-      ))}
-    </div>
-  </div>
+  <motion.div
+    custom={index}
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, margin: "-50px" }}
+    variants={fadeUp}
+    className={`overflow-hidden group relative cursor-pointer ${className}`}
+  >
+    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-700 z-10" />
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      className="w-full h-full object-cover grayscale contrast-[1.2] brightness-[0.85] group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
+    />
+  </motion.div>
 );
 
 const GallerySection = () => {
   return (
-    <section className="py-24 bg-background border-t border-border" id="gallery">
+    <section className="py-32 bg-background" id="gallery">
       <div className="container mx-auto px-6">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          transition={{ duration: 0.8 }}
+          className="text-center mb-20"
         >
-          <h2 className="font-display text-5xl md:text-6xl tracking-wider text-foreground">
+          <p className="font-body text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-4">
+            The Craft
+          </p>
+          <h2 className="font-display text-6xl md:text-8xl tracking-wider text-foreground">
             GALLERY
           </h2>
-          <p className="font-body text-muted-foreground text-sm mt-4 tracking-wide">
-            Real work. Real style.
-          </p>
+          <div className="w-12 h-px bg-foreground/30 mx-auto mt-8" />
         </motion.div>
 
-        <div className="max-w-5xl mx-auto space-y-16">
-          <GalleryGroup title="CENTER" images={centerImages} />
-          <GalleryGroup title="IALYSSOS" images={ialyssosImages} delayOffset={3} />
+        {/* Editorial Layout */}
+        <div className="max-w-6xl mx-auto space-y-2">
+          {/* Row 1 — Full-width hero */}
+          <GalleryImage
+            src={heroImage}
+            alt="Street Barbers team at work"
+            className="aspect-[21/9] w-full"
+            index={0}
+          />
+
+          {/* Row 2 — Portrait + Detail */}
+          <div className="grid grid-cols-5 gap-2">
+            <GalleryImage
+              src={shopCenter}
+              alt="Street Barbers Center interior"
+              className="col-span-3 aspect-[4/5]"
+              index={1}
+            />
+            <GalleryImage
+              src={locationCenter}
+              alt="Street Barbers Center storefront"
+              className="col-span-2 aspect-[4/5]"
+              index={2}
+            />
+          </div>
+
+          {/* Row 3 — Three equal */}
+          <div className="grid grid-cols-3 gap-2">
+            <GalleryImage
+              src={teamIalyssos}
+              alt="Street Barbers Ialyssos team"
+              className="aspect-square"
+              index={3}
+            />
+            <GalleryImage
+              src={shopIalyssos}
+              alt="Street Barbers Ialyssos interior"
+              className="aspect-square"
+              index={4}
+            />
+            <GalleryImage
+              src={locationIalyssos}
+              alt="Street Barbers Ialyssos storefront"
+              className="aspect-square"
+              index={5}
+            />
+          </div>
+
+          {/* Row 4 — Strong closing visual */}
+          <GalleryImage
+            src={locationCenter}
+            alt="Street Barbers — premium grooming"
+            className="aspect-[21/9] w-full"
+            index={6}
+          />
         </div>
       </div>
     </section>
