@@ -57,7 +57,7 @@ const ContactSection = () => {
                 <img
                   src={loc.image}
                   alt={loc.name}
-                  className="w-full h-full object-cover grayscale contrast-110 hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
 
