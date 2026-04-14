@@ -14,7 +14,150 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      barbers: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          location_id: string
+          name: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          location_id: string
+          name: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          location_id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "barbers_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          barber_id: string
+          booking_date: string
+          booking_time: string
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          location_id: string
+          service_id: string
+          status: string
+        }
+        Insert: {
+          barber_id: string
+          booking_date: string
+          booking_time: string
+          created_at?: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          location_id: string
+          service_id: string
+          status?: string
+        }
+        Update: {
+          barber_id?: string
+          booking_date?: string
+          booking_time?: string
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          location_id?: string
+          service_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string
+          created_at: string
+          id: string
+          maps_embed_url: string | null
+          name: string
+          phone: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          id?: string
+          maps_embed_url?: string | null
+          name: string
+          phone: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          id?: string
+          maps_embed_url?: string | null
+          name?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          duration_minutes: number
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          name: string
+          price: number
+        }
+        Update: {
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
