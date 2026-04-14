@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-barbershop.jpg";
-import { Scissors } from "lucide-react";
+import { Phone, MapPin } from "lucide-react";
 
 interface HeroSectionProps {
   onBookNow: () => void;
@@ -12,12 +12,12 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <div className="absolute inset-0">
         <img
           src={heroImage}
-          alt="Street Barbers interior"
-          className="w-full h-full object-cover"
+          alt="Street Barbers"
+          className="w-full h-full object-cover grayscale"
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 text-center">
@@ -25,33 +25,48 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="space-y-6"
+          className="space-y-8"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="h-px w-12 bg-primary" />
-            <Scissors className="w-5 h-5 text-primary" />
-            <div className="h-px w-12 bg-primary" />
-          </div>
-
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
-            <span className="text-gold-gradient">STREET</span>
+          <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none">
+            PREMIUM CUTS
             <br />
-            <span className="text-foreground">BARBERS</span>
+            IN RHODES
           </h1>
 
-          <p className="font-body text-muted-foreground text-lg md:text-xl max-w-md mx-auto">
-            Premium grooming experience in Rhodes, Greece.
-            Two locations. One standard.
+          <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide">
+            Precision grooming. Timeless style.
           </p>
 
-          <motion.button
-            onClick={onBookNow}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className="mt-8 inline-flex items-center gap-2 bg-gold-gradient text-primary-foreground font-body font-semibold px-8 py-4 rounded-sm text-sm uppercase tracking-widest shadow-gold transition-all"
-          >
-            Book Appointment
-          </motion.button>
+          <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm font-body">
+            <MapPin className="w-4 h-4" />
+            <span>Amarantou 24, Rhodes</span>
+            <span className="mx-2">·</span>
+            <span>Mon–Sat 10:00–21:00</span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <motion.a
+              href="tel:+302241601358"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-2 bg-foreground text-background font-body font-semibold px-8 py-4 text-sm uppercase tracking-widest"
+            >
+              <Phone className="w-4 h-4" />
+              Call Now
+            </motion.a>
+
+            <motion.a
+              href="https://maps.google.com/?q=Amarantou+24+Rhodes+Greece"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-2 border border-foreground/30 text-foreground font-body font-semibold px-8 py-4 text-sm uppercase tracking-widest hover:bg-foreground/5 transition-colors"
+            >
+              <MapPin className="w-4 h-4" />
+              Get Directions
+            </motion.a>
+          </div>
         </motion.div>
       </div>
     </section>
