@@ -1,0 +1,322 @@
+import { useState, useEffect, forwardRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MapPin, Scissors, User, CalendarDays, Check, ChevronLeft, Phone, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { format, addDays, isBefore, startOfToday } from "date-fns";
+import { toast } from "sonner";
+
+type Location = { id: string; name: string; address: string; phone: string };
+type Service = { id: string; name: string; price: number; duration_minutes: number };
+type Barber = { id: string; name: string; location_id: string };
+
+const STEPS = [
+  { label: "Location", icon: MapPin },
+  { label: "Service", icon: Scissors },
+  { label: "Barber", icon: User },
+  { label: "Date & Time", icon: CalendarDays },
+  { label: "Confirm", icon: Check },
+];
+
+const TIME_SLOTS = [
+  "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+  "18:00", "18:30", "19:00", "19:30",
+];
+
+const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
+  const [step, setStep] = useState(0);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [barbers, setBarbers] = useState<Barber[]>([]);
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedBarber, setSelectedBarber] = useState<Barber | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [locRes, svcRes] = await Promise.all([
+        supabase.from("locations").select("*"),
+        supabase.from("services").select("*"),
+      ]);
+      if (locRes.data) setLocations(locRes.data);
+      if (svcRes.data) setServices(svcRes.data);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedLocation) {
+      supabase.from("barbers").select("*").eq("location_id", selectedLocation.id).then(({ data }) => {
+        if (data) setBarbers(data);
+      });
+    }
+  }, [selectedLocation]);
+
+  useEffect(() => {
+    if (selectedBarber && selectedDate) {
+      supabase
+        .from("bookings")
+        .select("booking_time")
+        .eq("barber_id", selectedBarber.id)
+        .eq("booking_date", selectedDate)
+        .eq("status", "confirmed")
+        .then(({ data }) => {
+          if (data) setBookedSlots(data.map((b) => b.booking_time));
+        });
+    }
+  }, [selectedBarber, selectedDate]);
+
+  const dates = Array.from({ length: 14 }, (_, i) => {
+    const d = addDays(startOfToday(), i);
+    return format(d, "yyyy-MM-dd");
+  });
+
+  const handleSubmit = async () => {
+    if (!selectedLocation || !selectedService || !selectedBarber || !selectedDate || !selectedTime || !customerName || !customerPhone) return;
+    setSubmitting(true);
+    const { error } = await supabase.from("bookings").insert({
+      location_id: selectedLocation.id,
+      service_id: selectedService.id,
+      barber_id: selectedBarber.id,
+      booking_date: selectedDate,
+      booking_time: selectedTime,
+      customer_name: customerName.trim(),
+      customer_phone: customerPhone.trim(),
+    });
+    setSubmitting(false);
+    if (error) {
+      if (error.code === "23505") toast.error("This time slot was just booked. Please choose another.");
+      else toast.error("Booking failed. Please try again.");
+      return;
+    }
+    toast.success("Appointment booked successfully!");
+    setStep(5); // success state
+  };
+
+  const goBack = () => {
+    if (step > 0) setStep(step - 1);
+  };
+
+  const slideVariants = {
+    enter: { x: 50, opacity: 0 },
+    center: { x: 0, opacity: 1 },
+    exit: { x: -50, opacity: 0 },
+  };
+
+  return (
+    <section ref={ref} className="py-24 bg-background" id="booking">
+      <div className="container mx-auto px-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+          <p className="text-primary font-body text-sm uppercase tracking-widest mb-3">Book Now</p>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground">Your Appointment</h2>
+        </motion.div>
+
+        {/* Progress */}
+        {step < 5 && (
+          <div className="flex items-center justify-center gap-2 mb-12 max-w-lg mx-auto">
+            {STEPS.map((s, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-body transition-colors ${i <= step ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+                  <s.icon className="w-4 h-4" />
+                </div>
+                {i < STEPS.length - 1 && <div className={`w-6 h-px transition-colors ${i < step ? "bg-primary" : "bg-border"}`} />}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="max-w-2xl mx-auto">
+          {step > 0 && step < 5 && (
+            <button onClick={goBack} className="flex items-center gap-1 text-muted-foreground hover:text-foreground font-body text-sm mb-6 transition-colors">
+              <ChevronLeft className="w-4 h-4" /> Back
+            </button>
+          )}
+
+          <AnimatePresence mode="wait">
+            {/* Step 0: Location */}
+            {step === 0 && (
+              <motion.div key="loc" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-2 gap-4">
+                {locations.map((loc) => (
+                  <button
+                    key={loc.id}
+                    onClick={() => { setSelectedLocation(loc); setStep(1); }}
+                    className="bg-card-gradient border border-border rounded-lg p-6 text-left hover:border-primary/50 transition-all group"
+                  >
+                    <MapPin className="w-5 h-5 text-primary mb-3" />
+                    <h3 className="font-display text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{loc.name}</h3>
+                    <p className="text-muted-foreground text-sm mt-1">{loc.address}</p>
+                    <p className="text-muted-foreground text-sm flex items-center gap-1 mt-2"><Phone className="w-3 h-3" />{loc.phone}</p>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+
+            {/* Step 1: Service */}
+            {step === 1 && (
+              <motion.div key="svc" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-3 gap-4">
+                {services.map((svc) => (
+                  <button
+                    key={svc.id}
+                    onClick={() => { setSelectedService(svc); setStep(2); }}
+                    className="bg-card-gradient border border-border rounded-lg p-6 text-center hover:border-primary/50 transition-all"
+                  >
+                    <Scissors className="w-5 h-5 text-primary mx-auto mb-3" />
+                    <h3 className="font-display text-lg font-semibold text-foreground">{svc.name}</h3>
+                    <p className="text-primary font-display text-xl font-bold mt-2">€{svc.price}</p>
+                    <p className="text-muted-foreground text-xs mt-1">{svc.duration_minutes} min</p>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+
+            {/* Step 2: Barber */}
+            {step === 2 && (
+              <motion.div key="barber" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-3 gap-4">
+                {barbers.map((b) => (
+                  <button
+                    key={b.id}
+                    onClick={() => { setSelectedBarber(b); setStep(3); }}
+                    className="bg-card-gradient border border-border rounded-lg p-6 text-center hover:border-primary/50 transition-all"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-3">
+                      <User className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="font-display text-lg font-semibold text-foreground">{b.name}</h3>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+
+            {/* Step 3: Date & Time */}
+            {step === 3 && (
+              <motion.div key="datetime" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
+                <div>
+                  <p className="font-body text-sm text-muted-foreground mb-3">Select a date</p>
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {dates.map((d) => {
+                      const dateObj = new Date(d + "T00:00:00");
+                      return (
+                        <button
+                          key={d}
+                          onClick={() => { setSelectedDate(d); setSelectedTime(""); }}
+                          className={`flex-shrink-0 w-16 py-3 rounded-lg text-center font-body text-sm transition-all border ${selectedDate === d ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border text-foreground hover:border-primary/50"}`}
+                        >
+                          <span className="block text-xs opacity-70">{format(dateObj, "EEE")}</span>
+                          <span className="block font-semibold">{format(dateObj, "d")}</span>
+                          <span className="block text-xs opacity-70">{format(dateObj, "MMM")}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {selectedDate && (
+                  <div>
+                    <p className="font-body text-sm text-muted-foreground mb-3">Select a time</p>
+                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                      {TIME_SLOTS.map((t) => {
+                        const isBooked = bookedSlots.includes(t);
+                        return (
+                          <button
+                            key={t}
+                            disabled={isBooked}
+                            onClick={() => { setSelectedTime(t); setStep(4); }}
+                            className={`py-2 rounded-md font-body text-sm transition-all border ${isBooked ? "bg-secondary/50 text-muted-foreground border-border cursor-not-allowed line-through" : selectedTime === t ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border text-foreground hover:border-primary/50"}`}
+                          >
+                            {t}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Step 4: Confirm */}
+            {step === 4 && (
+              <motion.div key="confirm" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
+                <div className="bg-card-gradient border border-border rounded-lg p-6 space-y-3">
+                  <p className="text-sm text-muted-foreground font-body">Booking Summary</p>
+                  <div className="space-y-2 text-sm font-body">
+                    <div className="flex justify-between"><span className="text-muted-foreground">Location</span><span className="text-foreground">{selectedLocation?.name}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Service</span><span className="text-foreground">{selectedService?.name} — €{selectedService?.price}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Barber</span><span className="text-foreground">{selectedBarber?.name}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="text-foreground">{selectedDate && format(new Date(selectedDate + "T00:00:00"), "EEEE, d MMMM yyyy")}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Time</span><span className="text-primary font-semibold">{selectedTime}</span></div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-muted-foreground font-body mb-1">Your Name</label>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="John Doe"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-muted-foreground font-body mb-1">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder="+30 694 123 4567"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <motion.button
+                  onClick={handleSubmit}
+                  disabled={!customerName.trim() || !customerPhone.trim() || submitting}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-gold-gradient text-primary-foreground font-body font-semibold py-4 rounded-lg text-sm uppercase tracking-widest shadow-gold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Booking...</> : "Confirm Booking"}
+                </motion.button>
+              </motion.div>
+            )}
+
+            {/* Success */}
+            {step === 5 && (
+              <motion.div key="success" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="text-center py-12">
+                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Check className="w-8 h-8 text-primary-foreground" />
+                </div>
+                <h3 className="font-display text-3xl font-bold text-foreground mb-3">You're All Set!</h3>
+                <p className="text-muted-foreground font-body mb-8">
+                  Your appointment with <span className="text-primary">{selectedBarber?.name}</span> at <span className="text-primary">{selectedLocation?.name}</span> is confirmed for{" "}
+                  <span className="text-primary">{selectedDate && format(new Date(selectedDate + "T00:00:00"), "d MMMM")} at {selectedTime}</span>.
+                </p>
+                <button
+                  onClick={() => { setStep(0); setSelectedLocation(null); setSelectedService(null); setSelectedBarber(null); setSelectedDate(""); setSelectedTime(""); setCustomerName(""); setCustomerPhone(""); }}
+                  className="font-body text-sm text-primary underline hover:no-underline"
+                >
+                  Book another appointment
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
+  );
+});
+
+BookingFlow.displayName = "BookingFlow";
+
+export default BookingFlow;
