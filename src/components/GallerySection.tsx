@@ -132,11 +132,6 @@ const GallerySection = () => {
               className="aspect-[3/2]"
               index={6}
             />
-              src={galleryTeamRack}
-              alt="Street Barbers team"
-              className="aspect-[3/4]"
-              index={7}
-            />
           </div>
 
           {/* Row 5 — Three detail shots */}
