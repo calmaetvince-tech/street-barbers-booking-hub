@@ -46,6 +46,93 @@ export type Database = {
           },
         ]
       }
+      blocked_dates: {
+        Row: {
+          barber_id: string | null
+          blocked_date: string
+          created_at: string
+          id: string
+          location_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          barber_id?: string | null
+          blocked_date: string
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          barber_id?: string | null
+          blocked_date?: string
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_dates_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocked_dates_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blocked_time_slots: {
+        Row: {
+          barber_id: string | null
+          blocked_date: string
+          blocked_time: string
+          created_at: string
+          id: string
+          location_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          barber_id?: string | null
+          blocked_date: string
+          blocked_time: string
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          barber_id?: string | null
+          blocked_date?: string
+          blocked_time?: string
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_time_slots_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocked_time_slots_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           barber_id: string
@@ -54,8 +141,10 @@ export type Database = {
           created_at: string
           customer_name: string
           customer_phone: string
+          duration_at_booking: number | null
           id: string
           location_id: string
+          price_at_booking: number | null
           service_id: string
           status: string
         }
@@ -66,8 +155,10 @@ export type Database = {
           created_at?: string
           customer_name: string
           customer_phone: string
+          duration_at_booking?: number | null
           id?: string
           location_id: string
+          price_at_booking?: number | null
           service_id: string
           status?: string
         }
@@ -78,8 +169,10 @@ export type Database = {
           created_at?: string
           customer_name?: string
           customer_phone?: string
+          duration_at_booking?: number | null
           id?: string
           location_id?: string
+          price_at_booking?: number | null
           service_id?: string
           status?: string
         }

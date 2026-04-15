@@ -8,6 +8,8 @@ import { toast } from "sonner";
 type Location = { id: string; name: string; address: string; phone: string };
 type Service = { id: string; name: string; price: number; duration_minutes: number };
 type Barber = { id: string; name: string; location_id: string };
+type BlockedDate = { blocked_date: string; location_id: string | null; barber_id: string | null };
+type BlockedTimeSlot = { blocked_date: string; blocked_time: string; location_id: string | null; barber_id: string | null };
 
 const STEPS = [
   { label: "Location", icon: MapPin },
@@ -30,6 +32,8 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   const [services, setServices] = useState<Service[]>([]);
   const [barbers, setBarbers] = useState<Barber[]>([]);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
+  const [blockedTimeSlots, setBlockedTimeSlots] = useState<BlockedTimeSlot[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
@@ -42,12 +46,16 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [locRes, svcRes] = await Promise.all([
+      const [locRes, svcRes, bdRes, btsRes] = await Promise.all([
         supabase.from("locations").select("*"),
         supabase.from("services").select("*"),
+        supabase.from("blocked_dates").select("blocked_date,location_id,barber_id"),
+        supabase.from("blocked_time_slots").select("blocked_date,blocked_time,location_id,barber_id"),
       ]);
       if (locRes.data) setLocations(locRes.data);
       if (svcRes.data) setServices(svcRes.data);
+      if (bdRes.data) setBlockedDates(bdRes.data);
+      if (btsRes.data) setBlockedTimeSlots(btsRes.data);
     };
     fetchData();
   }, []);
@@ -67,17 +75,42 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
         .select("booking_time")
         .eq("barber_id", selectedBarber.id)
         .eq("booking_date", selectedDate)
-        .eq("status", "confirmed")
+        .neq("status", "cancelled")
         .then(({ data }) => {
           if (data) setBookedSlots(data.map((b) => b.booking_time));
         });
     }
   }, [selectedBarber, selectedDate]);
 
+  // Check if a date is fully blocked for this location+barber
+  const isDateBlocked = (dateStr: string) => {
+    return blockedDates.some((bd) => {
+      if (bd.blocked_date !== dateStr) return false;
+      // Global block (no specific location/barber)
+      const locMatch = !bd.location_id || bd.location_id === selectedLocation?.id;
+      const barberMatch = !bd.barber_id || bd.barber_id === selectedBarber?.id;
+      return locMatch && barberMatch;
+    });
+  };
+
+  // Check if a specific time slot is blocked
+  const isSlotBlocked = (dateStr: string, time: string) => {
+    return blockedTimeSlots.some((bts) => {
+      if (bts.blocked_date !== dateStr || bts.blocked_time !== time) return false;
+      const locMatch = !bts.location_id || bts.location_id === selectedLocation?.id;
+      const barberMatch = !bts.barber_id || bts.barber_id === selectedBarber?.id;
+      return locMatch && barberMatch;
+    });
+  };
+
   const dates = Array.from({ length: 21 }, (_, i) => {
     const d = addDays(startOfToday(), i);
     return d;
-  }).filter((d) => d.getDay() !== 0).slice(0, 14).map((d) => format(d, "yyyy-MM-dd"));
+  })
+    .filter((d) => d.getDay() !== 0) // No Sundays
+    .filter((d) => !isDateBlocked(format(d, "yyyy-MM-dd"))) // No blocked dates
+    .slice(0, 14)
+    .map((d) => format(d, "yyyy-MM-dd"));
 
   const handleSubmit = async () => {
     if (!selectedLocation || !selectedService || !selectedBarber || !selectedDate || !selectedTime || !customerName || !customerPhone) return;
@@ -90,6 +123,8 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       booking_time: selectedTime,
       customer_name: customerName.trim(),
       customer_phone: customerPhone.trim(),
+      price_at_booking: selectedService.price,
+      duration_at_booking: selectedService.duration_minutes,
     });
     setSubmitting(false);
     if (error) {
@@ -140,11 +175,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
             {step === 0 && (
               <motion.div key="loc" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-2 gap-4">
                 {locations.map((loc) => (
-                  <button
-                    key={loc.id}
-                    onClick={() => { setSelectedLocation(loc); setStep(1); }}
-                    className="bg-card border border-border p-6 text-left hover:border-foreground/30 transition-all group"
-                  >
+                  <button key={loc.id} onClick={() => { setSelectedLocation(loc); setStep(1); }} className="bg-card border border-border p-6 text-left hover:border-foreground/30 transition-all group">
                     <MapPin className="w-5 h-5 text-foreground mb-3" />
                     <h3 className="font-display text-xl tracking-wider text-foreground">{loc.name}</h3>
                     <p className="text-muted-foreground text-sm mt-1 font-body">{loc.address}</p>
@@ -157,11 +188,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
             {step === 1 && (
               <motion.div key="svc" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-3 gap-4">
                 {services.map((svc) => (
-                  <button
-                    key={svc.id}
-                    onClick={() => { setSelectedService(svc); setStep(2); }}
-                    className="bg-card border border-border p-6 text-center hover:border-foreground/30 transition-all"
-                  >
+                  <button key={svc.id} onClick={() => { setSelectedService(svc); setStep(2); }} className="bg-card border border-border p-6 text-center hover:border-foreground/30 transition-all">
                     <h3 className="font-display text-xl tracking-wider text-foreground">{svc.name}</h3>
                     <p className="font-body text-2xl font-light text-foreground mt-3">€{svc.price}</p>
                     <p className="text-muted-foreground text-xs mt-1 font-body">{svc.duration_minutes} min</p>
@@ -173,11 +200,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
             {step === 2 && (
               <motion.div key="barber" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-3 gap-4">
                 {barbers.map((b) => (
-                  <button
-                    key={b.id}
-                    onClick={() => { setSelectedBarber(b); setStep(3); }}
-                    className="bg-card border border-border p-8 text-center hover:border-foreground/30 transition-all"
-                  >
+                  <button key={b.id} onClick={() => { setSelectedBarber(b); setStep(3); }} className="bg-card border border-border p-8 text-center hover:border-foreground/30 transition-all">
                     <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
                       <User className="w-10 h-10 text-muted-foreground" />
                     </div>
@@ -195,11 +218,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                     {dates.map((d) => {
                       const dateObj = new Date(d + "T00:00:00");
                       return (
-                        <button
-                          key={d}
-                          onClick={() => { setSelectedDate(d); setSelectedTime(""); }}
-                          className={`flex-shrink-0 w-16 py-3 text-center font-body text-sm transition-all border ${selectedDate === d ? "bg-foreground text-background border-foreground" : "bg-card border-border text-foreground hover:border-foreground/30"}`}
-                        >
+                        <button key={d} onClick={() => { setSelectedDate(d); setSelectedTime(""); }} className={`flex-shrink-0 w-16 py-3 text-center font-body text-sm transition-all border ${selectedDate === d ? "bg-foreground text-background border-foreground" : "bg-card border-border text-foreground hover:border-foreground/30"}`}>
                           <span className="block text-xs opacity-70">{format(dateObj, "EEE")}</span>
                           <span className="block font-semibold">{format(dateObj, "d")}</span>
                           <span className="block text-xs opacity-70">{format(dateObj, "MMM")}</span>
@@ -215,13 +234,10 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                     <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                       {TIME_SLOTS.map((t) => {
                         const isBooked = bookedSlots.includes(t);
+                        const isBlocked = isSlotBlocked(selectedDate, t);
+                        const unavailable = isBooked || isBlocked;
                         return (
-                          <button
-                            key={t}
-                            disabled={isBooked}
-                            onClick={() => { setSelectedTime(t); setStep(4); }}
-                            className={`py-2 font-body text-sm transition-all border ${isBooked ? "bg-secondary/50 text-muted-foreground border-border cursor-not-allowed line-through" : selectedTime === t ? "bg-foreground text-background border-foreground" : "bg-card border-border text-foreground hover:border-foreground/30"}`}
-                          >
+                          <button key={t} disabled={unavailable} onClick={() => { setSelectedTime(t); setStep(4); }} className={`py-2 font-body text-sm transition-all border ${unavailable ? "bg-secondary/50 text-muted-foreground border-border cursor-not-allowed line-through" : selectedTime === t ? "bg-foreground text-background border-foreground" : "bg-card border-border text-foreground hover:border-foreground/30"}`}>
                             {t}
                           </button>
                         );
@@ -248,23 +264,15 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm text-muted-foreground font-body mb-1">Your Name</label>
-                    <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="John Doe"
-                      className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors" />
+                    <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="John Doe" className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors" />
                   </div>
                   <div>
                     <label className="block text-sm text-muted-foreground font-body mb-1">Phone Number</label>
-                    <input type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="+30 694 123 4567"
-                      className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors" />
+                    <input type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="+30 694 123 4567" className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors" />
                   </div>
                 </div>
 
-                <motion.button
-                  onClick={handleSubmit}
-                  disabled={!customerName.trim() || !customerPhone.trim() || submitting}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-foreground text-background font-body font-semibold py-4 text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
+                <motion.button onClick={handleSubmit} disabled={!customerName.trim() || !customerPhone.trim() || submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-foreground text-background font-body font-semibold py-4 text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                   {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Booking...</> : "Confirm Booking"}
                 </motion.button>
               </motion.div>
@@ -280,10 +288,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                   Your appointment with <span className="text-foreground">{selectedBarber?.name}</span> at <span className="text-foreground">{selectedLocation?.name}</span> is confirmed for{" "}
                   <span className="text-foreground">{selectedDate && format(new Date(selectedDate + "T00:00:00"), "d MMMM")} at {selectedTime}</span>.
                 </p>
-                <button
-                  onClick={() => { setStep(0); setSelectedLocation(null); setSelectedService(null); setSelectedBarber(null); setSelectedDate(""); setSelectedTime(""); setCustomerName(""); setCustomerPhone(""); }}
-                  className="font-body text-sm text-foreground underline hover:no-underline"
-                >
+                <button onClick={() => { setStep(0); setSelectedLocation(null); setSelectedService(null); setSelectedBarber(null); setSelectedDate(""); setSelectedTime(""); setCustomerName(""); setCustomerPhone(""); }} className="font-body text-sm text-foreground underline hover:no-underline">
                   Book another appointment
                 </button>
               </motion.div>
