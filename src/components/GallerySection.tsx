@@ -125,14 +125,13 @@ const GallerySection = () => {
           </div>
 
           {/* Row 4 — Two portrait images */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
             <GalleryImage
               src={galleryPompadour}
               alt="Pompadour style haircut"
-              className="aspect-[3/4]"
+              className="aspect-[3/2]"
               index={6}
             />
-            <GalleryImage
               src={galleryTeamRack}
               alt="Street Barbers team"
               className="aspect-[3/4]"
