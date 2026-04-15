@@ -35,9 +35,9 @@ const Index = () => {
 
       <HeroSection onBookNow={scrollToBooking} />
       <ServicesSection />
-      <GallerySection />
       <BookingFlow ref={bookingRef} />
       <ContactSection />
+      <GallerySection />
       <StickyCallCTA />
 
       {/* Footer */}
