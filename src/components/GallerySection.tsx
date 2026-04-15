@@ -43,7 +43,7 @@ const GalleryImage = ({
       src={src}
       alt={alt}
       loading="lazy"
-      className="w-full h-full object-cover grayscale contrast-[1.2] brightness-[0.85] group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
+      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
     />
   </motion.div>
 );
