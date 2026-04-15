@@ -16,6 +16,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           className="w-full h-full object-cover"
           width={1920}
           height={1080}
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
       </div>

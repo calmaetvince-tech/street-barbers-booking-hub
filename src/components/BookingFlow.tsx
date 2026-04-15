@@ -1,9 +1,10 @@
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect, useCallback, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Scissors, User, CalendarDays, Check, ChevronLeft, Phone, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfToday } from "date-fns";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 type Location = { id: string; name: string; address: string; phone: string };
 type Service = { id: string; name: string; price: number; duration_minutes: number };
@@ -28,87 +29,113 @@ const TIME_SLOTS = [
 
 const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   const [step, setStep] = useState(0);
-  const [locations, setLocations] = useState<Location[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
-  const [barbers, setBarbers] = useState<Barber[]>([]);
-  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
-  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
-  const [blockedTimeSlots, setBlockedTimeSlots] = useState<BlockedTimeSlot[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedBarber, setSelectedBarber] = useState<Barber | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const [locRes, svcRes, bdRes, btsRes] = await Promise.all([
-        supabase.from("locations").select("*"),
-        supabase.from("services").select("*"),
-        supabase.from("blocked_dates").select("blocked_date,location_id,barber_id"),
-        supabase.from("blocked_time_slots").select("blocked_date,blocked_time,location_id,barber_id"),
-      ]);
-      if (locRes.data) setLocations(locRes.data);
-      if (svcRes.data) setServices(svcRes.data);
-      if (bdRes.data) setBlockedDates(bdRes.data);
-      if (btsRes.data) setBlockedTimeSlots(btsRes.data);
-    };
-    fetchData();
-  }, []);
+  // Cache static data with long staleTime
+  const { data: locations = [] } = useQuery<Location[]>({
+    queryKey: ["locations"],
+    queryFn: async () => {
+      const { data } = await supabase.from("locations").select("*");
+      return data || [];
+    },
+    staleTime: 10 * 60 * 1000, // 10 min
+  });
 
-  useEffect(() => {
-    if (selectedLocation) {
-      supabase.from("barbers").select("*").eq("location_id", selectedLocation.id).then(({ data }) => {
-        if (data) setBarbers(data);
-      });
-    }
-  }, [selectedLocation]);
+  const { data: services = [] } = useQuery<Service[]>({
+    queryKey: ["services"],
+    queryFn: async () => {
+      const { data } = await supabase.from("services").select("*");
+      return data || [];
+    },
+    staleTime: 10 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    if (selectedBarber && selectedDate) {
-      supabase
+  // Fetch barbers only when location is selected
+  const { data: barbers = [] } = useQuery<Barber[]>({
+    queryKey: ["barbers", selectedLocation?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("barbers").select("*").eq("location_id", selectedLocation!.id);
+      return data || [];
+    },
+    enabled: !!selectedLocation,
+    staleTime: 10 * 60 * 1000,
+  });
+
+  // Fetch blocked dates only when location is selected (needed for date picker)
+  const { data: blockedDates = [] } = useQuery<BlockedDate[]>({
+    queryKey: ["blocked_dates", selectedLocation?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("blocked_dates")
+        .select("blocked_date,location_id,barber_id")
+        .or(`location_id.is.null,location_id.eq.${selectedLocation!.id}`);
+      return data || [];
+    },
+    enabled: !!selectedLocation,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fetch blocked time slots only when we need to show times (location+barber+date selected)
+  const { data: blockedTimeSlots = [] } = useQuery<BlockedTimeSlot[]>({
+    queryKey: ["blocked_time_slots", selectedLocation?.id, selectedBarber?.id, selectedDate],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("blocked_time_slots")
+        .select("blocked_date,blocked_time,location_id,barber_id")
+        .eq("blocked_date", selectedDate)
+        .or(`location_id.is.null,location_id.eq.${selectedLocation!.id}`)
+        .or(`barber_id.is.null,barber_id.eq.${selectedBarber!.id}`);
+      return data || [];
+    },
+    enabled: !!selectedLocation && !!selectedBarber && !!selectedDate,
+    staleTime: 60 * 1000, // 1 min for availability
+  });
+
+  // Fetch booked slots only when barber+date selected
+  const { data: bookedSlots = [] } = useQuery<string[]>({
+    queryKey: ["booked_slots", selectedBarber?.id, selectedDate],
+    queryFn: async () => {
+      const { data } = await supabase
         .from("bookings")
         .select("booking_time")
-        .eq("barber_id", selectedBarber.id)
+        .eq("barber_id", selectedBarber!.id)
         .eq("booking_date", selectedDate)
-        .neq("status", "cancelled")
-        .then(({ data }) => {
-          if (data) setBookedSlots(data.map((b) => b.booking_time));
-        });
-    }
-  }, [selectedBarber, selectedDate]);
+        .neq("status", "cancelled");
+      return data?.map((b) => b.booking_time) || [];
+    },
+    enabled: !!selectedBarber && !!selectedDate,
+    staleTime: 30 * 1000, // 30s for real-time accuracy
+  });
 
-  // Check if a date is fully blocked for this location+barber
-  const isDateBlocked = (dateStr: string) => {
+  const isDateBlocked = useCallback((dateStr: string) => {
     return blockedDates.some((bd) => {
       if (bd.blocked_date !== dateStr) return false;
-      // Global block (no specific location/barber)
       const locMatch = !bd.location_id || bd.location_id === selectedLocation?.id;
       const barberMatch = !bd.barber_id || bd.barber_id === selectedBarber?.id;
       return locMatch && barberMatch;
     });
-  };
+  }, [blockedDates, selectedLocation?.id, selectedBarber?.id]);
 
-  // Check if a specific time slot is blocked
-  const isSlotBlocked = (dateStr: string, time: string) => {
+  const isSlotBlocked = useCallback((dateStr: string, time: string) => {
     return blockedTimeSlots.some((bts) => {
       if (bts.blocked_date !== dateStr || bts.blocked_time !== time) return false;
       const locMatch = !bts.location_id || bts.location_id === selectedLocation?.id;
       const barberMatch = !bts.barber_id || bts.barber_id === selectedBarber?.id;
       return locMatch && barberMatch;
     });
-  };
+  }, [blockedTimeSlots, selectedLocation?.id, selectedBarber?.id]);
 
-  const dates = Array.from({ length: 21 }, (_, i) => {
-    const d = addDays(startOfToday(), i);
-    return d;
-  })
-    .filter((d) => d.getDay() !== 0) // No Sundays
-    .filter((d) => !isDateBlocked(format(d, "yyyy-MM-dd"))) // No blocked dates
+  const dates = Array.from({ length: 21 }, (_, i) => addDays(startOfToday(), i))
+    .filter((d) => d.getDay() !== 0)
+    .filter((d) => !isDateBlocked(format(d, "yyyy-MM-dd")))
     .slice(0, 14)
     .map((d) => format(d, "yyyy-MM-dd"));
 
