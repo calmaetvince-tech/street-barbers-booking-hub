@@ -124,15 +124,6 @@ const GallerySection = () => {
             />
           </div>
 
-          {/* Row 4 — Two portrait images */}
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
-            <GalleryImage
-              src={galleryPompadour}
-              alt="Pompadour style haircut"
-              className="aspect-[3/2]"
-              index={6}
-            />
-          </div>
 
           {/* Row 5 — Three detail shots */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
