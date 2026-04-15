@@ -74,10 +74,10 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [selectedBarber, selectedDate]);
 
-  const dates = Array.from({ length: 14 }, (_, i) => {
+  const dates = Array.from({ length: 21 }, (_, i) => {
     const d = addDays(startOfToday(), i);
-    return format(d, "yyyy-MM-dd");
-  });
+    return d;
+  }).filter((d) => d.getDay() !== 0).slice(0, 14).map((d) => format(d, "yyyy-MM-dd"));
 
   const handleSubmit = async () => {
     if (!selectedLocation || !selectedService || !selectedBarber || !selectedDate || !selectedTime || !customerName || !customerPhone) return;
