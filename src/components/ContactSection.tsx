@@ -57,6 +57,7 @@ const ContactSection = () => {
                 <img
                   src={loc.image}
                   alt={loc.name}
+                  loading="lazy"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
