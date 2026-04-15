@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import galleryBarberAction from "@/assets/gallery-barber-action.jpg";
+import galleryHero from "@/assets/gallery-hero.jpg";
 import galleryFadeSide from "@/assets/gallery-fade-side.jpg";
 import galleryOldStyle from "@/assets/gallery-old-style.jpg";
 import galleryDropFade from "@/assets/gallery-drop-fade.jpg";
@@ -24,11 +24,13 @@ const GalleryImage = ({
   alt,
   className = "",
   index = 0,
+  bw = false,
 }: {
   src: string;
   alt: string;
   className?: string;
   index?: number;
+  bw?: boolean;
 }) => (
   <motion.div
     custom={index}
@@ -43,8 +45,13 @@ const GalleryImage = ({
       src={src}
       alt={alt}
       loading="lazy"
-      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
+      className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1200ms] ease-out ${bw ? "grayscale contrast-[1.25] brightness-[0.85]" : ""}`}
     />
+    {bw && (
+      <div className="absolute inset-0 pointer-events-none" style={{
+        boxShadow: "inset 0 0 120px 40px rgba(0,0,0,0.4)",
+      }} />
+    )}
   </motion.div>
 );
 
@@ -69,17 +76,17 @@ const GallerySection = () => {
           <div className="w-12 h-px bg-foreground/30 mx-auto mt-8" />
         </motion.div>
 
-        {/* Editorial Layout */}
         <div className="max-w-6xl mx-auto space-y-3">
-          {/* Row 1 — Full-width hero */}
+          {/* Hero — single dominant B&W image */}
           <GalleryImage
-            src={galleryBarberAction}
-            alt="Barber at work — Street Barbers"
+            src={galleryHero}
+            alt="Street Barbers team — the crew"
             className="aspect-[21/9] w-full"
             index={0}
+            bw
           />
 
-          {/* Row 2 — Portrait + Detail */}
+          {/* Row 2 — Two medium images */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
             <GalleryImage
               src={galleryTeamIalyssos}
@@ -95,7 +102,7 @@ const GallerySection = () => {
             />
           </div>
 
-          {/* Row 3 — Three equal */}
+          {/* Row 3 — Three smaller images */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <GalleryImage
               src={galleryFadeSide}
@@ -117,7 +124,7 @@ const GallerySection = () => {
             />
           </div>
 
-          {/* Row 4 — Two-up cinematic */}
+          {/* Row 4 — Two portrait images */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <GalleryImage
               src={galleryPompadour}
@@ -148,7 +155,7 @@ const GallerySection = () => {
               index={9}
             />
             <GalleryImage
-              src={galleryBarberAction}
+              src={galleryPompadour}
               alt="Barber finishing touches"
               className="aspect-square"
               index={10}
