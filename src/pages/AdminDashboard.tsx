@@ -17,6 +17,7 @@ import BlockedDatesManager from "@/components/admin/BlockedDatesManager";
 import ServiceManager from "@/components/admin/ServiceManager";
 import CalendarView from "@/components/admin/CalendarView";
 import ScheduleManager from "@/components/admin/ScheduleManager";
+import TodayView from "@/components/admin/TodayView";
 
 type Booking = {
   id: string;
