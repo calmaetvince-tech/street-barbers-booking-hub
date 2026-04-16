@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Instagram } from "lucide-react";
 import galleryHero from "@/assets/gallery-hero.jpg";
 import galleryFadeSide from "@/assets/gallery-fade-side.jpg";
 import galleryOldStyle from "@/assets/gallery-old-style.jpg";
