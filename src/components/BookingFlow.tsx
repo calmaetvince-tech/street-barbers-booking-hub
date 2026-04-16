@@ -131,19 +131,38 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   });
 
   // Fetch booked slots only when barber+date selected
-  const { data: bookedSlots = [] } = useQuery<string[]>({
+  const { data: bookedSlots = [] } = useQuery<{ booking_time: string; duration_at_booking: number | null }[]>({
     queryKey: ["booked_slots", selectedBarber?.id, selectedDate],
     queryFn: async () => {
       const { data } = await supabase
         .from("bookings")
-        .select("booking_time")
+        .select("booking_time,duration_at_booking")
         .eq("barber_id", selectedBarber!.id)
         .eq("booking_date", selectedDate)
         .neq("status", "cancelled");
-      return data?.map((b) => b.booking_time) || [];
+      return (data || []).map((b: any) => ({
+        booking_time: trimTime(b.booking_time),
+        duration_at_booking: b.duration_at_booking,
+      }));
     },
     enabled: !!selectedBarber && !!selectedDate,
     staleTime: 30 * 1000, // 30s for real-time accuracy
+  });
+
+  // Build a Set of every 30-min slot that is occupied (accounting for service duration)
+  const toMin = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
+  const fromMin = (n: number) => `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(n % 60).padStart(2, "0")}`;
+
+  const occupiedSlots = new Set<string>();
+  bookedSlots.forEach((b) => {
+    const start = toMin(b.booking_time);
+    const dur = b.duration_at_booking || 30;
+    for (let m = start; m < start + dur; m += 30) {
+      occupiedSlots.add(fromMin(m));
+    }
   });
 
   const isDateBlocked = useCallback((dateStr: string) => {
@@ -306,12 +325,47 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                         <p className="col-span-full text-muted-foreground text-sm font-body">No available slots for this day.</p>
                       )}
                       {availableSlots.map((t) => {
-                        const isBooked = bookedSlots.includes(t);
-                        const isBlocked = isSlotBlocked(selectedDate, t);
-                        const unavailable = isBooked || isBlocked;
+                        // Check if this slot OR any slot the chosen service would occupy is taken
+                        const dur = selectedService?.duration_minutes || 30;
+                        const start = toMin(t);
+                        let unavailable = false;
+                        for (let m = start; m < start + dur; m += 30) {
+                          const s = fromMin(m);
+                          if (occupiedSlots.has(s) || isSlotBlocked(selectedDate, s)) {
+                            unavailable = true;
+                            break;
+                          }
+                        }
+                        // Also block slots whose service-duration would exceed working hours
+                        const dow = new Date(selectedDate + "T00:00:00").getDay();
+                        const wh = workingHours.find((w) => w.day_of_week === dow);
+                        if (wh && start + dur > toMin(wh.end_time)) unavailable = true;
+
                         return (
-                          <button key={t} disabled={unavailable} onClick={() => { setSelectedTime(t); setStep(4); }} className={`py-2 font-body text-sm transition-all border ${unavailable ? "bg-secondary/50 text-muted-foreground border-border cursor-not-allowed line-through" : selectedTime === t ? "bg-foreground text-background border-foreground" : "bg-card border-border text-foreground hover:border-foreground/30"}`}>
-                            {t}
+                          <button
+                            key={t}
+                            disabled={unavailable}
+                            aria-disabled={unavailable}
+                            onClick={() => { if (!unavailable) { setSelectedTime(t); setStep(4); } }}
+                            className={`relative py-2 font-body text-sm border overflow-hidden ${
+                              unavailable
+                                ? "bg-secondary/30 text-muted-foreground/60 border-border/50 cursor-not-allowed line-through opacity-50 pointer-events-none"
+                                : selectedTime === t
+                                ? "bg-foreground text-background border-foreground transition-all"
+                                : "bg-card border-border text-foreground hover:border-foreground/30 hover:bg-secondary/40 transition-all cursor-pointer"
+                            }`}
+                          >
+                            {unavailable && (
+                              <span
+                                aria-hidden
+                                className="absolute inset-0 pointer-events-none"
+                                style={{
+                                  backgroundImage:
+                                    "repeating-linear-gradient(135deg, transparent 0 6px, hsl(var(--muted-foreground) / 0.18) 6px 7px)",
+                                }}
+                              />
+                            )}
+                            <span className="relative">{t}</span>
                           </button>
                         );
                       })}
