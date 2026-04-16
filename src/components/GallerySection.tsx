@@ -4,8 +4,6 @@ import galleryHero from "@/assets/gallery-hero.jpg";
 import galleryFadeSide from "@/assets/gallery-fade-side.jpg";
 import galleryOldStyle from "@/assets/gallery-old-style.jpg";
 import galleryDropFade from "@/assets/gallery-drop-fade.jpg";
-import galleryPompadour from "@/assets/gallery-pompadour.jpg";
-import galleryTeamRack from "@/assets/gallery-team-rack.jpg";
 import galleryStorefrontNight from "@/assets/gallery-storefront-night.jpg";
 import galleryBurstFade from "@/assets/gallery-burst-fade.jpg";
 import galleryTeamIalyssos from "@/assets/gallery-team-ialyssos.jpg";
@@ -57,9 +55,84 @@ const GalleryImage = ({
   </motion.div>
 );
 
+type Img = { src: string; alt: string };
+
+const LocationGalleryBlock = ({
+  label,
+  title,
+  instagramUrl,
+  instagramHandle,
+  heroImage,
+  gridImages,
+  startIndex,
+}: {
+  label: string;
+  title: string;
+  instagramUrl: string;
+  instagramHandle: string;
+  heroImage: Img;
+  gridImages: Img[];
+  startIndex: number;
+}) => (
+  <div className="pt-12 md:pt-16">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className="flex items-end justify-between mb-4 gap-4"
+    >
+      <div>
+        <p className="font-body text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-2">
+          {label}
+        </p>
+        <h3 className="font-display text-2xl md:text-3xl tracking-wider text-foreground">
+          {title}
+        </h3>
+      </div>
+      <a
+        href={instagramUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Follow ${title} on Instagram`}
+        className="hidden sm:inline-flex items-center gap-2 font-body text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-foreground transition-colors border-b border-transparent hover:border-foreground pb-1"
+      >
+        <Instagram className="w-3.5 h-3.5" />
+        {instagramHandle}
+      </a>
+    </motion.div>
+
+    {/* Hero image — full width, consistent ratio */}
+    <GalleryImage src={heroImage.src} alt={heroImage.alt} className="aspect-[16/9] w-full" index={startIndex} />
+
+    {/* 3-image grid — same on both locations */}
+    <div className="grid grid-cols-3 gap-3 mt-3">
+      {gridImages.map((img, i) => (
+        <GalleryImage
+          key={img.src}
+          src={img.src}
+          alt={img.alt}
+          className="aspect-square"
+          index={startIndex + 1 + i}
+        />
+      ))}
+    </div>
+
+    <a
+      href={instagramUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-3 group flex items-center justify-center gap-3 border border-foreground/20 hover:border-foreground hover:bg-foreground hover:text-background transition-all duration-500 py-4 font-body text-[11px] uppercase tracking-[0.3em] text-foreground"
+    >
+      <Instagram className="w-4 h-4 transition-transform duration-500 group-hover:scale-110" />
+      View more on Instagram
+    </a>
+  </div>
+);
+
 const GallerySection = () => {
   return (
-    <section className="py-32 bg-background" id="gallery">
+    <section className="py-24 md:py-32 bg-background" id="gallery">
       <div className="container mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -67,7 +140,7 @@ const GallerySection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-20"
+          className="text-center mb-16 md:mb-20"
         >
           <p className="font-body text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-4">
             The Craft
@@ -89,99 +162,34 @@ const GallerySection = () => {
           />
 
           {/* ===== CENTER LOCATION ===== */}
-          <div className="pt-12">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="flex items-end justify-between mb-4 gap-4"
-            >
-              <div>
-                <p className="font-body text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-2">
-                  Location 01
-                </p>
-                <h3 className="font-display text-2xl md:text-3xl tracking-wider text-foreground">
-                  STREET BARBERS CENTER
-                </h3>
-              </div>
-              <a
-                href="https://www.instagram.com/streetbarbers.store/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Follow Street Barbers Center on Instagram"
-                className="hidden sm:inline-flex items-center gap-2 font-body text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-foreground transition-colors border-b border-transparent hover:border-foreground pb-1"
-              >
-                <Instagram className="w-3.5 h-3.5" />
-                @streetbarbers.store
-              </a>
-            </motion.div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <GalleryImage src={galleryFadeSide} alt="Clean fade haircut" className="aspect-square" index={1} />
-              <GalleryImage src={galleryOldStyle} alt="Classic old style cut" className="aspect-square" index={2} />
-              <GalleryImage src={galleryDropFade} alt="Drop fade haircut" className="aspect-square" index={3} />
-              <GalleryImage src={galleryStorefrontNight} alt="Street Barbers storefront at night" className="aspect-square" index={4} />
-            </div>
-
-            <a
-              href="https://www.instagram.com/streetbarbers.store/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 group flex items-center justify-center gap-3 border border-foreground/20 hover:border-foreground hover:bg-foreground hover:text-background transition-all duration-500 py-4 font-body text-[11px] uppercase tracking-[0.3em] text-foreground"
-            >
-              <Instagram className="w-4 h-4 transition-transform duration-500 group-hover:scale-110" />
-              View more on Instagram
-            </a>
-          </div>
+          <LocationGalleryBlock
+            label="Location 01"
+            title="STREET BARBERS CENTER"
+            instagramUrl="https://www.instagram.com/streetbarbers.store/"
+            instagramHandle="@streetbarbers.store"
+            heroImage={{ src: galleryStorefrontNight, alt: "Street Barbers Center storefront at night" }}
+            gridImages={[
+              { src: galleryFadeSide, alt: "Clean fade haircut" },
+              { src: galleryOldStyle, alt: "Classic old style cut" },
+              { src: galleryDropFade, alt: "Drop fade haircut" },
+            ]}
+            startIndex={1}
+          />
 
           {/* ===== IALYSSOS LOCATION ===== */}
-          <div className="pt-16">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="flex items-end justify-between mb-4 gap-4"
-            >
-              <div>
-                <p className="font-body text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-2">
-                  Location 02
-                </p>
-                <h3 className="font-display text-2xl md:text-3xl tracking-wider text-foreground">
-                  STREET BARBERS IALYSSOS
-                </h3>
-              </div>
-              <a
-                href="https://www.instagram.com/street_barbers_ialysos/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Follow Street Barbers Ialyssos on Instagram"
-                className="hidden sm:inline-flex items-center gap-2 font-body text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-foreground transition-colors border-b border-transparent hover:border-foreground pb-1"
-              >
-                <Instagram className="w-3.5 h-3.5" />
-                @street_barbers_ialysos
-              </a>
-            </motion.div>
-
-            <GalleryImage src={galleryTeamIalyssos} alt="Street Barbers Ialyssos team" className="aspect-[16/9] w-full" index={5} />
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
-              <GalleryImage src={galleryBuzzCut} alt="Buzz cut precision" className="aspect-square" index={6} />
-              <GalleryImage src={gallerySkinFade} alt="Skin fade detail" className="aspect-square" index={7} />
-              <GalleryImage src={galleryBurstFade} alt="Burst fade by @ilias_mavroudis" className="aspect-square" index={8} />
-            </div>
-
-            <a
-              href="https://www.instagram.com/street_barbers_ialysos/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 group flex items-center justify-center gap-3 border border-foreground/20 hover:border-foreground hover:bg-foreground hover:text-background transition-all duration-500 py-4 font-body text-[11px] uppercase tracking-[0.3em] text-foreground"
-            >
-              <Instagram className="w-4 h-4 transition-transform duration-500 group-hover:scale-110" />
-              View more on Instagram
-            </a>
-          </div>
+          <LocationGalleryBlock
+            label="Location 02"
+            title="STREET BARBERS IALYSSOS"
+            instagramUrl="https://www.instagram.com/street_barbers_ialysos/"
+            instagramHandle="@street_barbers_ialysos"
+            heroImage={{ src: galleryTeamIalyssos, alt: "Street Barbers Ialyssos team" }}
+            gridImages={[
+              { src: galleryBuzzCut, alt: "Buzz cut precision" },
+              { src: gallerySkinFade, alt: "Skin fade detail" },
+              { src: galleryBurstFade, alt: "Burst fade by @ilias_mavroudis" },
+            ]}
+            startIndex={5}
+          />
         </div>
       </div>
     </section>
