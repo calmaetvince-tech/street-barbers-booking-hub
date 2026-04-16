@@ -164,11 +164,23 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     });
   }, [blockedTimeSlots, selectedLocation?.id, selectedBarber?.id]);
 
-  const dates = Array.from({ length: 21 }, (_, i) => addDays(startOfToday(), i))
-    .filter((d) => d.getDay() !== 0)
+  // A date is available if the barber has a working schedule for that weekday and it isn't blocked
+  const workingDays = new Set(workingHours.filter((w) => w.is_working).map((w) => w.day_of_week));
+
+  const dates = Array.from({ length: 30 }, (_, i) => addDays(startOfToday(), i))
+    .filter((d) => workingDays.size === 0 ? d.getDay() !== 0 : workingDays.has(d.getDay()))
     .filter((d) => !isDateBlocked(format(d, "yyyy-MM-dd")))
     .slice(0, 14)
     .map((d) => format(d, "yyyy-MM-dd"));
+
+  // Available time slots for the selected date based on the barber's schedule for that weekday
+  const availableSlots: string[] = (() => {
+    if (!selectedDate) return [];
+    const dow = new Date(selectedDate + "T00:00:00").getDay();
+    const wh = workingHours.find((w) => w.day_of_week === dow);
+    if (!wh || !wh.is_working) return [];
+    return generateSlots(wh.start_time, wh.end_time);
+  })();
 
   const handleSubmit = async () => {
     if (!selectedLocation || !selectedService || !selectedBarber || !selectedDate || !selectedTime || !customerName || !customerPhone) return;
@@ -290,7 +302,10 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                   <div>
                     <p className="font-body text-sm text-muted-foreground mb-3">Select a time</p>
                     <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                      {TIME_SLOTS.map((t) => {
+                      {availableSlots.length === 0 && (
+                        <p className="col-span-full text-muted-foreground text-sm font-body">No available slots for this day.</p>
+                      )}
+                      {availableSlots.map((t) => {
                         const isBooked = bookedSlots.includes(t);
                         const isBlocked = isSlotBlocked(selectedDate, t);
                         const unavailable = isBooked || isBlocked;
