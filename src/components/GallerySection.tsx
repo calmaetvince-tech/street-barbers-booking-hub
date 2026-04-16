@@ -164,11 +164,12 @@ const GallerySection = () => {
               </a>
             </motion.div>
 
-            <GalleryImage src={galleryBurstFade} alt="Burst fade by @ilias_mavroudis" className="aspect-[16/9] w-full" index={5} />
+            <GalleryImage src={galleryTeamIalyssos} alt="Street Barbers Ialyssos team" className="aspect-[16/9] w-full" index={5} />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
               <GalleryImage src={galleryBuzzCut} alt="Buzz cut precision" className="aspect-square" index={6} />
               <GalleryImage src={gallerySkinFade} alt="Skin fade detail" className="aspect-square" index={7} />
+              <GalleryImage src={galleryBurstFade} alt="Burst fade by @ilias_mavroudis" className="aspect-square" index={8} />
             </div>
 
             <a
