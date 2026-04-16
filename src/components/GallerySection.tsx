@@ -167,10 +167,9 @@ const GallerySection = () => {
               <GalleryImage src={galleryStorefrontNight} alt="Street Barbers Ialyssos storefront at night" className="md:col-span-2 aspect-[4/5]" index={5} />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
               <GalleryImage src={galleryBuzzCut} alt="Buzz cut precision" className="aspect-square" index={6} />
               <GalleryImage src={gallerySkinFade} alt="Skin fade detail" className="aspect-square" index={7} />
-              <GalleryImage src={galleryPompadour} alt="Barber finishing touches" className="aspect-square" index={8} />
             </div>
 
             <a
