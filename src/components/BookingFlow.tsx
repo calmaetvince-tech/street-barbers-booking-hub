@@ -325,12 +325,47 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                         <p className="col-span-full text-muted-foreground text-sm font-body">No available slots for this day.</p>
                       )}
                       {availableSlots.map((t) => {
-                        const isBooked = bookedSlots.includes(t);
-                        const isBlocked = isSlotBlocked(selectedDate, t);
-                        const unavailable = isBooked || isBlocked;
+                        // Check if this slot OR any slot the chosen service would occupy is taken
+                        const dur = selectedService?.duration_minutes || 30;
+                        const start = toMin(t);
+                        let unavailable = false;
+                        for (let m = start; m < start + dur; m += 30) {
+                          const s = fromMin(m);
+                          if (occupiedSlots.has(s) || isSlotBlocked(selectedDate, s)) {
+                            unavailable = true;
+                            break;
+                          }
+                        }
+                        // Also block slots whose service-duration would exceed working hours
+                        const dow = new Date(selectedDate + "T00:00:00").getDay();
+                        const wh = workingHours.find((w) => w.day_of_week === dow);
+                        if (wh && start + dur > toMin(wh.end_time)) unavailable = true;
+
                         return (
-                          <button key={t} disabled={unavailable} onClick={() => { setSelectedTime(t); setStep(4); }} className={`py-2 font-body text-sm transition-all border ${unavailable ? "bg-secondary/50 text-muted-foreground border-border cursor-not-allowed line-through" : selectedTime === t ? "bg-foreground text-background border-foreground" : "bg-card border-border text-foreground hover:border-foreground/30"}`}>
-                            {t}
+                          <button
+                            key={t}
+                            disabled={unavailable}
+                            aria-disabled={unavailable}
+                            onClick={() => { if (!unavailable) { setSelectedTime(t); setStep(4); } }}
+                            className={`relative py-2 font-body text-sm border overflow-hidden ${
+                              unavailable
+                                ? "bg-secondary/30 text-muted-foreground/60 border-border/50 cursor-not-allowed line-through opacity-50 pointer-events-none"
+                                : selectedTime === t
+                                ? "bg-foreground text-background border-foreground transition-all"
+                                : "bg-card border-border text-foreground hover:border-foreground/30 hover:bg-secondary/40 transition-all cursor-pointer"
+                            }`}
+                          >
+                            {unavailable && (
+                              <span
+                                aria-hidden
+                                className="absolute inset-0 pointer-events-none"
+                                style={{
+                                  backgroundImage:
+                                    "repeating-linear-gradient(135deg, transparent 0 6px, hsl(var(--muted-foreground) / 0.18) 6px 7px)",
+                                }}
+                              />
+                            )}
+                            <span className="relative">{t}</span>
                           </button>
                         );
                       })}
