@@ -116,10 +116,11 @@ const GallerySection = () => {
               </a>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <GalleryImage src={galleryFadeSide} alt="Clean fade haircut" className="aspect-square" index={1} />
               <GalleryImage src={galleryOldStyle} alt="Classic old style cut" className="aspect-square" index={2} />
               <GalleryImage src={galleryDropFade} alt="Drop fade haircut" className="aspect-square" index={3} />
+              <GalleryImage src={galleryStorefrontNight} alt="Street Barbers storefront at night" className="aspect-square" index={4} />
             </div>
 
             <a
@@ -162,10 +163,7 @@ const GallerySection = () => {
               </a>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-              <GalleryImage src={galleryTeamIalyssos} alt="Street Barbers Ialyssos team" className="md:col-span-3 aspect-[4/5]" index={4} />
-              <GalleryImage src={galleryStorefrontNight} alt="Street Barbers Ialyssos storefront at night" className="md:col-span-2 aspect-[4/5]" index={5} />
-            </div>
+            <GalleryImage src={galleryTeamIalyssos} alt="Street Barbers Ialyssos team" className="aspect-[16/9] w-full" index={5} />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
               <GalleryImage src={galleryBuzzCut} alt="Buzz cut precision" className="aspect-square" index={6} />
