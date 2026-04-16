@@ -7,6 +7,7 @@ import galleryDropFade from "@/assets/gallery-drop-fade.jpg";
 import galleryPompadour from "@/assets/gallery-pompadour.jpg";
 import galleryTeamRack from "@/assets/gallery-team-rack.jpg";
 import galleryStorefrontNight from "@/assets/gallery-storefront-night.jpg";
+import galleryBurstFade from "@/assets/gallery-burst-fade.jpg";
 import galleryTeamIalyssos from "@/assets/gallery-team-ialyssos.jpg";
 import galleryBuzzCut from "@/assets/gallery-buzz-cut.jpg";
 import gallerySkinFade from "@/assets/gallery-skin-fade.jpg";
@@ -163,7 +164,7 @@ const GallerySection = () => {
               </a>
             </motion.div>
 
-            <GalleryImage src={galleryTeamIalyssos} alt="Street Barbers Ialyssos team" className="aspect-[16/9] w-full" index={5} />
+            <GalleryImage src={galleryBurstFade} alt="Burst fade by @ilias_mavroudis" className="aspect-[16/9] w-full" index={5} />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
               <GalleryImage src={galleryBuzzCut} alt="Buzz cut precision" className="aspect-square" index={6} />
