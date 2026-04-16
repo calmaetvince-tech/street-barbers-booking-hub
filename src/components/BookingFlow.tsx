@@ -131,19 +131,38 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   });
 
   // Fetch booked slots only when barber+date selected
-  const { data: bookedSlots = [] } = useQuery<string[]>({
+  const { data: bookedSlots = [] } = useQuery<{ booking_time: string; duration_at_booking: number | null }[]>({
     queryKey: ["booked_slots", selectedBarber?.id, selectedDate],
     queryFn: async () => {
       const { data } = await supabase
         .from("bookings")
-        .select("booking_time")
+        .select("booking_time,duration_at_booking")
         .eq("barber_id", selectedBarber!.id)
         .eq("booking_date", selectedDate)
         .neq("status", "cancelled");
-      return data?.map((b) => b.booking_time) || [];
+      return (data || []).map((b: any) => ({
+        booking_time: trimTime(b.booking_time),
+        duration_at_booking: b.duration_at_booking,
+      }));
     },
     enabled: !!selectedBarber && !!selectedDate,
     staleTime: 30 * 1000, // 30s for real-time accuracy
+  });
+
+  // Build a Set of every 30-min slot that is occupied (accounting for service duration)
+  const toMin = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
+  const fromMin = (n: number) => `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(n % 60).padStart(2, "0")}`;
+
+  const occupiedSlots = new Set<string>();
+  bookedSlots.forEach((b) => {
+    const start = toMin(b.booking_time);
+    const dur = b.duration_at_booking || 30;
+    for (let m = start; m < start + dur; m += 30) {
+      occupiedSlots.add(fromMin(m));
+    }
   });
 
   const isDateBlocked = useCallback((dateStr: string) => {
