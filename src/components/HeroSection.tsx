@@ -42,7 +42,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             <MapPin className="w-4 h-4" />
             <span>Amerikis 40, Rhodes</span>
             <span>·</span>
-            <span>Iraklidon Avenue, Ialyssos</span>
+            <span>Irakleidon Avenue, Ialyssos</span>
             <span className="mx-2">·</span>
             <span>Mon–Sat 10:00–21:00</span>
           </div>
