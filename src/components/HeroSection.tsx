@@ -38,9 +38,11 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             Precision grooming. Timeless style.
           </p>
 
-          <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm font-body">
+          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-sm font-body">
             <MapPin className="w-4 h-4" />
-            <span>Amarantou 24, Rhodes</span>
+            <span>Amerikis 40, Rhodes</span>
+            <span>·</span>
+            <span>Iraklidon Avenue, Ialyssos</span>
             <span className="mx-2">·</span>
             <span>Mon–Sat 10:00–21:00</span>
           </div>
