@@ -199,17 +199,19 @@ const AdminDashboard = () => {
         </Button>
       </header>
 
-      <main className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+      <main className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-6">
         <Tabs defaultValue="today" className="space-y-6">
-          <TabsList className="flex-wrap">
-            <TabsTrigger value="today">Today</TabsTrigger>
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="bookings">Bookings</TabsTrigger>
-            <TabsTrigger value="calendar">Calendar</TabsTrigger>
-            <TabsTrigger value="blocked">Blocked Dates</TabsTrigger>
-            <TabsTrigger value="schedules">Schedules</TabsTrigger>
-            <TabsTrigger value="services">Services</TabsTrigger>
-          </TabsList>
+          <div className="-mx-3 sm:mx-0 overflow-x-auto pb-1">
+            <TabsList className="flex w-max sm:w-auto sm:flex-wrap px-3 sm:px-0">
+              <TabsTrigger value="today">Today</TabsTrigger>
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="bookings">Bookings</TabsTrigger>
+              <TabsTrigger value="calendar">Calendar</TabsTrigger>
+              <TabsTrigger value="blocked">Blocked</TabsTrigger>
+              <TabsTrigger value="schedules">Schedules</TabsTrigger>
+              <TabsTrigger value="services">Services</TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Today Tab */}
           <TabsContent value="today">
@@ -223,29 +225,116 @@ const AdminDashboard = () => {
 
           {/* Bookings Tab */}
           <TabsContent value="bookings" className="space-y-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <Input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} className="w-auto" />
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3">
+              <Input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="col-span-2 sm:col-span-1 sm:w-auto"
+              />
               <Select value={filterLocation} onValueChange={setFilterLocation}>
-                <SelectTrigger className="w-[180px]"><SelectValue placeholder="All Locations" /></SelectTrigger>
+                <SelectTrigger className="sm:w-[180px]"><SelectValue placeholder="All Locations" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Locations</SelectItem>
                   {locations.map((l) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Select value={filterBarber} onValueChange={setFilterBarber}>
-                <SelectTrigger className="w-[180px]"><SelectValue placeholder="All Barbers" /></SelectTrigger>
+                <SelectTrigger className="sm:w-[180px]"><SelectValue placeholder="All Barbers" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Barbers</SelectItem>
                   {barbers.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
                 </SelectContent>
               </Select>
-              {filterDate && <Button variant="ghost" size="sm" onClick={() => setFilterDate("")}>Clear date</Button>}
-              <div className="ml-auto">
-                <Button onClick={openNew} size="sm"><Plus className="w-4 h-4 mr-1" /> New Booking</Button>
+              <div className="col-span-2 sm:col-span-1 flex items-center gap-2 sm:ml-auto">
+                {filterDate && (
+                  <Button variant="ghost" size="sm" onClick={() => setFilterDate("")} className="flex-1 sm:flex-none">
+                    Clear date
+                  </Button>
+                )}
+                <Button onClick={openNew} size="sm" className="flex-1 sm:flex-none">
+                  <Plus className="w-4 h-4 mr-1" /> New
+                </Button>
               </div>
             </div>
 
-            <Card>
+            {/* Mobile: stacked cards */}
+            <div className="md:hidden space-y-3">
+              {filtered.length === 0 && (
+                <Card>
+                  <CardContent className="py-8 text-center text-muted-foreground text-sm">
+                    No bookings found
+                  </CardContent>
+                </Card>
+              )}
+              {filtered.map((b) => (
+                <Card key={b.id}>
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-display text-lg tracking-wide truncate">{b.customer_name}</p>
+                        <a
+                          href={`tel:${b.customer_phone}`}
+                          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {b.customer_phone}
+                        </a>
+                      </div>
+                      <Select value={b.status} onValueChange={(v) => updateStatus(b.id, v)}>
+                        <SelectTrigger className="h-7 w-auto text-xs border-0 p-0 gap-1">
+                          <Badge className={`${statusColors[b.status] || ""} text-[10px]`}>{b.status}</Badge>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="confirmed">Confirmed</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs font-body">
+                      <div>
+                        <p className="text-muted-foreground">Date</p>
+                        <p className="text-foreground font-medium">{b.booking_date}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Time</p>
+                        <p className="text-foreground font-medium font-mono">{b.booking_time.slice(0, 5)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Service</p>
+                        <p className="text-foreground truncate">{getName(services, b.service_id)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Price</p>
+                        <p className="text-foreground font-medium">{b.price_at_booking != null ? `€${b.price_at_booking}` : "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Barber</p>
+                        <p className="text-foreground truncate">{getName(barbers, b.barber_id)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Location</p>
+                        <p className="text-foreground truncate">{getName(locations, b.location_id)}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1 pt-2 border-t border-border/50">
+                      <Button variant="ghost" size="sm" className="h-8" onClick={() => openEdit(b)}>
+                        <Pencil className="w-3.5 h-3.5 mr-1" /> Edit
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-8 text-destructive" onClick={() => deleteBooking(b.id)}>
+                        <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Desktop: table */}
+            <Card className="hidden md:block">
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
