@@ -16,6 +16,7 @@ import RevenueCards from "@/components/admin/RevenueCards";
 import BlockedDatesManager from "@/components/admin/BlockedDatesManager";
 import ServiceManager from "@/components/admin/ServiceManager";
 import CalendarView from "@/components/admin/CalendarView";
+import ScheduleManager from "@/components/admin/ScheduleManager";
 
 type Booking = {
   id: string;
@@ -204,6 +205,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
             <TabsTrigger value="blocked">Blocked Dates</TabsTrigger>
+            <TabsTrigger value="schedules">Schedules</TabsTrigger>
             <TabsTrigger value="services">Services</TabsTrigger>
           </TabsList>
 
@@ -314,6 +316,11 @@ const AdminDashboard = () => {
               blockedTimeSlots={blockedTimeSlots}
               onRefresh={fetchAll}
             />
+          </TabsContent>
+
+          {/* Schedules Tab */}
+          <TabsContent value="schedules">
+            <ScheduleManager barbers={barbers} locations={locations} />
           </TabsContent>
 
           {/* Services Tab */}
