@@ -11,6 +11,7 @@ type Service = { id: string; name: string; price: number; duration_minutes: numb
 type Barber = { id: string; name: string; location_id: string };
 type BlockedDate = { blocked_date: string; location_id: string | null; barber_id: string | null };
 type BlockedTimeSlot = { blocked_date: string; blocked_time: string; location_id: string | null; barber_id: string | null };
+type WorkingHour = { day_of_week: number; start_time: string; end_time: string; is_working: boolean };
 
 const STEPS = [
   { label: "Location", icon: MapPin },
@@ -20,12 +21,23 @@ const STEPS = [
   { label: "Confirm", icon: Check },
 ];
 
-const TIME_SLOTS = [
-  "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
-  "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
-  "16:00", "16:30", "17:00", "17:30", "18:00", "18:30",
-  "19:00", "19:30", "20:00", "20:30",
-];
+const trimTime = (t: string) => (t?.length >= 5 ? t.substring(0, 5) : t);
+
+// Generate 30-min time slots between start (inclusive) and end (exclusive of end)
+const generateSlots = (start: string, end: string): string[] => {
+  const slots: string[] = [];
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  let cur = sh * 60 + sm;
+  const endMin = eh * 60 + em;
+  while (cur < endMin) {
+    const h = Math.floor(cur / 60);
+    const m = cur % 60;
+    slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+    cur += 30;
+  }
+  return slots;
+};
 
 const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   const [step, setStep] = useState(0);
@@ -80,6 +92,25 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       return data || [];
     },
     enabled: !!selectedLocation,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fetch barber's weekly schedule when a barber is selected
+  const { data: workingHours = [] } = useQuery<WorkingHour[]>({
+    queryKey: ["working_hours", selectedBarber?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("barber_working_hours")
+        .select("day_of_week,start_time,end_time,is_working")
+        .eq("barber_id", selectedBarber!.id);
+      return (data || []).map((r: any) => ({
+        day_of_week: r.day_of_week,
+        start_time: trimTime(r.start_time),
+        end_time: trimTime(r.end_time),
+        is_working: r.is_working,
+      }));
+    },
+    enabled: !!selectedBarber,
     staleTime: 5 * 60 * 1000,
   });
 
