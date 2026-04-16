@@ -200,8 +200,9 @@ const AdminDashboard = () => {
       </header>
 
       <main className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
-        <Tabs defaultValue="dashboard" className="space-y-6">
+        <Tabs defaultValue="today" className="space-y-6">
           <TabsList className="flex-wrap">
+            <TabsTrigger value="today">Today</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
@@ -209,6 +210,11 @@ const AdminDashboard = () => {
             <TabsTrigger value="schedules">Schedules</TabsTrigger>
             <TabsTrigger value="services">Services</TabsTrigger>
           </TabsList>
+
+          {/* Today Tab */}
+          <TabsContent value="today">
+            <TodayView bookings={bookings} barbers={barbers} services={services} locations={locations} />
+          </TabsContent>
 
           {/* Dashboard Tab */}
           <TabsContent value="dashboard">
