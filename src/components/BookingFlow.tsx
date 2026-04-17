@@ -205,22 +205,41 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     });
   }, [blockedTimeSlots, selectedLocation?.id, selectedBarber?.id]);
 
-  // A date is available if the barber has a working schedule for that weekday and it isn't blocked
-  const workingDays = new Set(workingHours.filter((w) => w.is_working).map((w) => w.day_of_week));
+  // Resolve effective working hours for a given date: override beats weekly pattern.
+  const overrideByDate = new Map(scheduleOverrides.map((o) => [o.override_date, o]));
+  const getEffectiveHours = useCallback(
+    (dateStr: string): { is_working: boolean; start_time: string; end_time: string } | null => {
+      const ov = overrideByDate.get(dateStr);
+      if (ov) return { is_working: ov.is_working, start_time: ov.start_time, end_time: ov.end_time };
+      const dow = new Date(dateStr + "T00:00:00").getDay();
+      const wh = workingHours.find((w) => w.day_of_week === dow);
+      if (!wh) return null;
+      return { is_working: wh.is_working, start_time: wh.start_time, end_time: wh.end_time };
+    },
+    [overrideByDate, workingHours]
+  );
 
+  // A date is available if effective hours mark it as working and it isn't blocked
   const dates = Array.from({ length: 30 }, (_, i) => addDays(startOfToday(), i))
-    .filter((d) => workingDays.size === 0 ? d.getDay() !== 0 : workingDays.has(d.getDay()))
+    .filter((d) => {
+      const dateStr = format(d, "yyyy-MM-dd");
+      const eff = getEffectiveHours(dateStr);
+      if (workingHours.length === 0 && !overrideByDate.has(dateStr)) {
+        // No schedule loaded yet — fall back to "not Sunday"
+        return d.getDay() !== 0;
+      }
+      return eff?.is_working === true;
+    })
     .filter((d) => !isDateBlocked(format(d, "yyyy-MM-dd")))
     .slice(0, 14)
     .map((d) => format(d, "yyyy-MM-dd"));
 
-  // Available time slots for the selected date based on the barber's schedule for that weekday
+  // Available time slots for the selected date based on effective schedule
   const availableSlots: string[] = (() => {
     if (!selectedDate) return [];
-    const dow = new Date(selectedDate + "T00:00:00").getDay();
-    const wh = workingHours.find((w) => w.day_of_week === dow);
-    if (!wh || !wh.is_working) return [];
-    const slots = generateSlots(wh.start_time, wh.end_time);
+    const eff = getEffectiveHours(selectedDate);
+    if (!eff || !eff.is_working) return [];
+    const slots = generateSlots(eff.start_time, eff.end_time);
 
     // Same-day filter: hide past slots and apply a 30-minute buffer.
     // Use the business's local timezone (Europe/Athens) for "now".
