@@ -26,13 +26,13 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           fetchPriority="high"
         />
 
-        {/* Mobile: same asset with mobile-specific framing */}
+        {/* Mobile: same asset, scaled to fully cover the hero for cinematic impact */}
         <div
           className="md:hidden absolute inset-0 bg-no-repeat"
           style={{
             backgroundImage: `url(${heroImage})`,
-            backgroundPosition: "center 12%",
-            backgroundSize: "100% auto",
+            backgroundPosition: "center center",
+            backgroundSize: "cover",
           }}
           aria-hidden="true"
         />
