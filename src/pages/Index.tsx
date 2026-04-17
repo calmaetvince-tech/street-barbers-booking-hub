@@ -4,7 +4,7 @@ import ServicesSection from "@/components/ServicesSection";
 import GallerySection from "@/components/GallerySection";
 import BookingFlow from "@/components/BookingFlow";
 import ContactSection from "@/components/ContactSection";
-import StickyCallCTA from "@/components/StickyCallCTA";
+
 import { Phone } from "lucide-react";
 
 const Index = () => {
@@ -38,7 +38,7 @@ const Index = () => {
       <BookingFlow ref={bookingRef} />
       <ContactSection />
       <GallerySection />
-      <StickyCallCTA />
+      
 
       {/* Footer */}
       <footer className="border-t border-border py-8 pb-20 md:pb-8">
