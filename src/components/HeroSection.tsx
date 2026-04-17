@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-barbershop.jpg";
-import heroMobileImage from "@/assets/hero-team-group.jpg";
+import heroMobileImage from "@/assets/hero-center-team.jpg";
 import heroCenterImage from "@/assets/hero-team-group.jpg";
 import { Phone, MapPin } from "lucide-react";
 import {
@@ -37,7 +37,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <img
           src={heroMobileImage}
           alt="Street Barbers team"
-          className="md:hidden absolute inset-0 w-full h-full object-cover object-[80%_30%]"
+          className="md:hidden absolute inset-0 w-full h-full object-cover object-[50%_35%]"
           width={1080}
           height={1920}
           fetchPriority="high"
