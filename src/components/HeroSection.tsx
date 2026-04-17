@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-barbershop.jpg";
-import heroMobileImage from "@/assets/hero-center-team.jpg";
+import heroMobileImage from "@/assets/hero-team-group.jpg";
+import heroCenterImage from "@/assets/hero-team-group.jpg";
 import { Phone, MapPin } from "lucide-react";
 import {
   DropdownMenu,
