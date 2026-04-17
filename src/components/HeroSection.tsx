@@ -27,15 +27,14 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           fetchPriority="high"
         />
 
-        {/* Mobile: same asset, scaled to fully cover the hero for cinematic impact */}
-        <div
-          className="md:hidden absolute inset-0 bg-no-repeat"
-          style={{
-            backgroundImage: `url(${heroImage})`,
-            backgroundPosition: "center center",
-            backgroundSize: "cover",
-          }}
-          aria-hidden="true"
+        {/* Mobile: single strong image, full-bleed */}
+        <img
+          src={heroMobileImage}
+          alt="Street Barbers team"
+          className="md:hidden absolute inset-0 w-full h-full object-cover object-[center_30%] grayscale"
+          width={1080}
+          height={1920}
+          fetchPriority="high"
         />
 
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
