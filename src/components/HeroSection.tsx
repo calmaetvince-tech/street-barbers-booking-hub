@@ -31,7 +31,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <img
           src={heroMobileImage}
           alt="Street Barbers team"
-          className="md:hidden absolute inset-0 w-full h-full object-cover object-[65%_30%]"
+          className="md:hidden absolute inset-0 w-full h-full object-cover object-[80%_30%]"
           width={1080}
           height={1920}
           fetchPriority="high"
@@ -66,7 +66,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             <span>Mon–Sat 10:00–21:00</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-24 md:pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-40 md:pt-4">
             <motion.a
               href="tel:+302241601358"
               whileHover={{ scale: 1.03 }}
