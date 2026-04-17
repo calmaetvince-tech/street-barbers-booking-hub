@@ -30,7 +30,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <img
           src={heroCenterImage}
           alt="Street Barbers team"
-          className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[1]"
+          className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[3]"
         />
 
         {/* Mobile: single strong image, full-bleed */}
