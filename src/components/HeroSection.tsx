@@ -14,7 +14,7 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
-    <section className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-start justify-center overflow-hidden pt-24 md:pt-32">
+    <section className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-start justify-center overflow-hidden pt-12 md:pt-16">
       <div className="absolute inset-0">
         {/* Desktop: full composition */}
         <img
