@@ -1,8 +1,5 @@
 import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-barbershop.jpg";
-import shopCenter from "@/assets/shop-center.jpg";
-import shopIalyssos from "@/assets/shop-ialyssos.jpg";
-import barberAction from "@/assets/gallery-barber-action.jpg";
 import { Phone, MapPin } from "lucide-react";
 import {
   DropdownMenu,
@@ -19,6 +16,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
+        {/* Desktop: full composition */}
         <img
           src={heroImage}
           alt="Street Barbers"
@@ -28,24 +26,13 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           fetchPriority="high"
         />
 
-        <div className="md:hidden absolute inset-0 flex flex-col">
-          <img
-            src={shopCenter}
-            alt="Street Barbers Center storefront"
-            className="w-full flex-1 object-cover"
-            fetchPriority="high"
-          />
-          <img
-            src={barberAction}
-            alt="Barber at work"
-            className="w-full flex-1 object-cover"
-          />
-          <img
-            src={shopIalyssos}
-            alt="Street Barbers Ialyssos storefront"
-            className="w-full flex-1 object-cover"
-          />
-        </div>
+        {/* Mobile: same image, scaled & centered to feature the middle subject */}
+        <img
+          src={heroImage}
+          alt="Street Barbers"
+          className="md:hidden w-full h-full object-cover object-center scale-[1.8] origin-center"
+          fetchPriority="high"
+        />
 
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
       </div>
