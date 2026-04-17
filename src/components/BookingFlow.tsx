@@ -402,9 +402,8 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                           }
                         }
                         // Also block slots whose service-duration would exceed working hours
-                        const dow = new Date(selectedDate + "T00:00:00").getDay();
-                        const wh = workingHours.find((w) => w.day_of_week === dow);
-                        if (wh && start + dur > toMin(wh.end_time)) unavailable = true;
+                        const eff = getEffectiveHours(selectedDate);
+                        if (eff && eff.is_working && start + dur > toMin(eff.end_time)) unavailable = true;
 
                         return (
                           <button
