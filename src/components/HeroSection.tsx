@@ -45,7 +45,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="space-y-8"
+          className="space-y-8 md:flex md:flex-col md:space-y-0 md:gap-8"
         >
           <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none">
             PREMIUM CUTS
@@ -53,11 +53,11 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             IN RHODES
           </h1>
 
-          <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide">
+          <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide md:order-3">
             Precision grooming. Timeless style.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-sm font-body">
+          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-sm font-body md:order-4">
             <MapPin className="w-4 h-4" />
             <span>Amerikis 40, Rhodes</span>
             <span>·</span>
@@ -66,7 +66,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             <span>Mon–Sat 10:00–21:00</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-40 md:pt-20">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-40 md:pt-8 md:order-2">
             <motion.a
               href="tel:+302241601358"
               whileHover={{ scale: 1.03 }}
