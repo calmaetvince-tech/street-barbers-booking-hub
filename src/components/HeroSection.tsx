@@ -72,7 +72,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             <span>Mon–Sat 10:00–21:00</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-40 md:pt-48 order-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-60 md:pt-48 order-2">
             <motion.a
               href="tel:+302241601358"
               whileHover={{ scale: 1.03 }}
