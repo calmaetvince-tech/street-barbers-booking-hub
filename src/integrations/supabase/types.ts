@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      barber_schedule_overrides: {
+        Row: {
+          barber_id: string
+          created_at: string
+          end_time: string
+          id: string
+          is_working: boolean
+          override_date: string
+          start_time: string
+        }
+        Insert: {
+          barber_id: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          is_working?: boolean
+          override_date: string
+          start_time?: string
+        }
+        Update: {
+          barber_id?: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          is_working?: boolean
+          override_date?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "barber_schedule_overrides_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       barber_working_hours: {
         Row: {
           barber_id: string
