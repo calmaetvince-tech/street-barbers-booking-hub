@@ -1,6 +1,15 @@
 import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-barbershop.jpg";
+import shopCenter from "@/assets/shop-center.jpg";
+import shopIalyssos from "@/assets/shop-ialyssos.jpg";
+import barberAction from "@/assets/gallery-barber-action.jpg";
 import { Phone, MapPin } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 interface HeroSectionProps {
   onBookNow: () => void;
@@ -13,11 +22,31 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <img
           src={heroImage}
           alt="Street Barbers"
-          className="w-full h-full object-cover"
+          className="hidden md:block w-full h-full object-cover"
           width={1920}
           height={1080}
           fetchPriority="high"
         />
+
+        <div className="md:hidden absolute inset-0 flex flex-col">
+          <img
+            src={shopCenter}
+            alt="Street Barbers Center storefront"
+            className="w-full flex-1 object-cover"
+            fetchPriority="high"
+          />
+          <img
+            src={barberAction}
+            alt="Barber at work"
+            className="w-full flex-1 object-cover"
+          />
+          <img
+            src={shopIalyssos}
+            alt="Street Barbers Ialyssos storefront"
+            className="w-full flex-1 object-cover"
+          />
+        </div>
+
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
       </div>
 
@@ -58,17 +87,36 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               Call Now
             </motion.a>
 
-            <motion.a
-              href="https://maps.google.com/?q=Amarantou+24+Rhodes+Greece"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 border border-foreground/30 text-foreground font-body font-semibold px-8 py-4 text-sm uppercase tracking-widest hover:bg-foreground/5 transition-colors"
-            >
-              <MapPin className="w-4 h-4" />
-              Get Directions
-            </motion.a>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="inline-flex items-center gap-2 border border-foreground/30 text-foreground font-body font-semibold px-8 py-4 text-sm uppercase tracking-widest hover:bg-foreground/5 transition-colors">
+                  <MapPin className="w-4 h-4" />
+                  Get Directions
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="font-body">
+                <DropdownMenuItem asChild>
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=Amerikis+40,+Rodos+851+00,+Greece"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-pointer"
+                  >
+                    Street Barbers Center
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=Leoforos+Iraklidon,+Ialysos,+Rhodes,+Greece"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-pointer"
+                  >
+                    Street Barbers Ialyssos
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </motion.div>
       </div>
