@@ -26,24 +26,16 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           fetchPriority="high"
         />
 
-        {/* Mobile: preserve the full collage with a softened backdrop */}
-        <div className="md:hidden absolute inset-0">
-          <img
-            src={heroImage}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover object-center scale-[1.08] blur-sm opacity-40"
-            fetchPriority="high"
-          />
-
-          <div className="absolute inset-x-0 top-[9%] bottom-[14%] px-4">
-            <img
-              src={heroImage}
-              alt="Street Barbers"
-              className="w-full h-full object-contain object-center"
-            />
-          </div>
-        </div>
+        {/* Mobile: same asset with mobile-specific framing */}
+        <div
+          className="md:hidden absolute inset-0 bg-no-repeat"
+          style={{
+            backgroundImage: `url(${heroImage})`,
+            backgroundPosition: "center 12%",
+            backgroundSize: "100% auto",
+          }}
+          aria-hidden="true"
+        />
 
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
       </div>
