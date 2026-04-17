@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-barbershop.jpg";
-import heroMobileImage from "@/assets/hero-center-team.jpg";
+import heroMobileImage from "@/assets/hero-team-group.jpg";
+import heroCenterImage from "@/assets/hero-team-group.jpg";
 import { Phone, MapPin } from "lucide-react";
 import {
   DropdownMenu,
@@ -17,7 +18,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-start justify-center overflow-hidden pt-24 md:pt-24">
       <div className="absolute inset-0">
-        {/* Desktop: full composition */}
+        {/* Desktop: full composition with new center image overlay */}
         <img
           src={heroImage}
           alt="Street Barbers"
@@ -25,6 +26,11 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           width={1920}
           height={1080}
           fetchPriority="high"
+        />
+        <img
+          src={heroCenterImage}
+          alt="Street Barbers team"
+          className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[1]"
         />
 
         {/* Mobile: single strong image, full-bleed */}
@@ -37,7 +43,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           fetchPriority="high"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background z-[2]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 text-center">
