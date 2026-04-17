@@ -12,6 +12,7 @@ type Barber = { id: string; name: string; location_id: string };
 type BlockedDate = { blocked_date: string; location_id: string | null; barber_id: string | null };
 type BlockedTimeSlot = { blocked_date: string; blocked_time: string; location_id: string | null; barber_id: string | null };
 type WorkingHour = { day_of_week: number; start_time: string; end_time: string; is_working: boolean };
+type ScheduleOverride = { override_date: string; start_time: string; end_time: string; is_working: boolean };
 
 const STEPS = [
   { label: "Location", icon: MapPin },
@@ -114,7 +115,28 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch blocked time slots only when we need to show times (location+barber+date selected)
+  // Fetch date-specific overrides for this barber (next 14 days)
+  const { data: scheduleOverrides = [] } = useQuery<ScheduleOverride[]>({
+    queryKey: ["schedule_overrides", selectedBarber?.id],
+    queryFn: async () => {
+      const today = format(startOfToday(), "yyyy-MM-dd");
+      const end = format(addDays(startOfToday(), 30), "yyyy-MM-dd");
+      const { data } = await supabase
+        .from("barber_schedule_overrides")
+        .select("override_date,start_time,end_time,is_working")
+        .eq("barber_id", selectedBarber!.id)
+        .gte("override_date", today)
+        .lte("override_date", end);
+      return (data || []).map((r: any) => ({
+        override_date: r.override_date,
+        start_time: trimTime(r.start_time),
+        end_time: trimTime(r.end_time),
+        is_working: r.is_working,
+      }));
+    },
+    enabled: !!selectedBarber,
+    staleTime: 60 * 1000,
+  });
   const { data: blockedTimeSlots = [] } = useQuery<BlockedTimeSlot[]>({
     queryKey: ["blocked_time_slots", selectedLocation?.id, selectedBarber?.id, selectedDate],
     queryFn: async () => {
