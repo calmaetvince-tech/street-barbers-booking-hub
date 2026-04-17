@@ -37,7 +37,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <img
           src={heroMobileImage}
           alt="Street Barbers team"
-          className="md:hidden absolute inset-0 w-full h-full object-cover object-[18%_35%]"
+          className="md:hidden absolute inset-0 w-full h-full object-cover object-[12%_35%]"
           width={1080}
           height={1920}
           fetchPriority="high"
