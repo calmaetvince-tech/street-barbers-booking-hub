@@ -44,7 +44,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         />
 
         <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background z-[2]" />
-        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-background/30 via-background/20 to-background z-[2]" />
+        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-background/10 via-background/5 to-background/90 z-[2]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 text-center">
