@@ -198,7 +198,31 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     const dow = new Date(selectedDate + "T00:00:00").getDay();
     const wh = workingHours.find((w) => w.day_of_week === dow);
     if (!wh || !wh.is_working) return [];
-    return generateSlots(wh.start_time, wh.end_time);
+    const slots = generateSlots(wh.start_time, wh.end_time);
+
+    // Same-day filter: hide past slots and apply a 30-minute buffer.
+    // Use the business's local timezone (Europe/Athens) for "now".
+    const TZ = "Europe/Athens";
+    const fmt = new Intl.DateTimeFormat("en-CA", {
+      timeZone: TZ,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    const parts = fmt.formatToParts(new Date()).reduce<Record<string, string>>((acc, p) => {
+      if (p.type !== "literal") acc[p.type] = p.value;
+      return acc;
+    }, {});
+    const todayStr = `${parts.year}-${parts.month}-${parts.day}`;
+    if (selectedDate !== todayStr) return slots;
+
+    const BUFFER_MIN = 30;
+    const nowMin = parseInt(parts.hour, 10) * 60 + parseInt(parts.minute, 10);
+    const cutoff = nowMin + BUFFER_MIN;
+    return slots.filter((t) => toMin(t) >= cutoff);
   })();
 
   const handleSubmit = async () => {
