@@ -12,6 +12,7 @@ type Barber = { id: string; name: string; location_id: string };
 type BlockedDate = { blocked_date: string; location_id: string | null; barber_id: string | null };
 type BlockedTimeSlot = { blocked_date: string; blocked_time: string; location_id: string | null; barber_id: string | null };
 type WorkingHour = { day_of_week: number; start_time: string; end_time: string; is_working: boolean };
+type ScheduleOverride = { override_date: string; start_time: string; end_time: string; is_working: boolean };
 
 const STEPS = [
   { label: "Location", icon: MapPin },
@@ -114,7 +115,28 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch blocked time slots only when we need to show times (location+barber+date selected)
+  // Fetch date-specific overrides for this barber (next 14 days)
+  const { data: scheduleOverrides = [] } = useQuery<ScheduleOverride[]>({
+    queryKey: ["schedule_overrides", selectedBarber?.id],
+    queryFn: async () => {
+      const today = format(startOfToday(), "yyyy-MM-dd");
+      const end = format(addDays(startOfToday(), 30), "yyyy-MM-dd");
+      const { data } = await supabase
+        .from("barber_schedule_overrides")
+        .select("override_date,start_time,end_time,is_working")
+        .eq("barber_id", selectedBarber!.id)
+        .gte("override_date", today)
+        .lte("override_date", end);
+      return (data || []).map((r: any) => ({
+        override_date: r.override_date,
+        start_time: trimTime(r.start_time),
+        end_time: trimTime(r.end_time),
+        is_working: r.is_working,
+      }));
+    },
+    enabled: !!selectedBarber,
+    staleTime: 60 * 1000,
+  });
   const { data: blockedTimeSlots = [] } = useQuery<BlockedTimeSlot[]>({
     queryKey: ["blocked_time_slots", selectedLocation?.id, selectedBarber?.id, selectedDate],
     queryFn: async () => {
@@ -183,22 +205,41 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     });
   }, [blockedTimeSlots, selectedLocation?.id, selectedBarber?.id]);
 
-  // A date is available if the barber has a working schedule for that weekday and it isn't blocked
-  const workingDays = new Set(workingHours.filter((w) => w.is_working).map((w) => w.day_of_week));
+  // Resolve effective working hours for a given date: override beats weekly pattern.
+  const overrideByDate = new Map(scheduleOverrides.map((o) => [o.override_date, o]));
+  const getEffectiveHours = useCallback(
+    (dateStr: string): { is_working: boolean; start_time: string; end_time: string } | null => {
+      const ov = overrideByDate.get(dateStr);
+      if (ov) return { is_working: ov.is_working, start_time: ov.start_time, end_time: ov.end_time };
+      const dow = new Date(dateStr + "T00:00:00").getDay();
+      const wh = workingHours.find((w) => w.day_of_week === dow);
+      if (!wh) return null;
+      return { is_working: wh.is_working, start_time: wh.start_time, end_time: wh.end_time };
+    },
+    [overrideByDate, workingHours]
+  );
 
+  // A date is available if effective hours mark it as working and it isn't blocked
   const dates = Array.from({ length: 30 }, (_, i) => addDays(startOfToday(), i))
-    .filter((d) => workingDays.size === 0 ? d.getDay() !== 0 : workingDays.has(d.getDay()))
+    .filter((d) => {
+      const dateStr = format(d, "yyyy-MM-dd");
+      const eff = getEffectiveHours(dateStr);
+      if (workingHours.length === 0 && !overrideByDate.has(dateStr)) {
+        // No schedule loaded yet — fall back to "not Sunday"
+        return d.getDay() !== 0;
+      }
+      return eff?.is_working === true;
+    })
     .filter((d) => !isDateBlocked(format(d, "yyyy-MM-dd")))
     .slice(0, 14)
     .map((d) => format(d, "yyyy-MM-dd"));
 
-  // Available time slots for the selected date based on the barber's schedule for that weekday
+  // Available time slots for the selected date based on effective schedule
   const availableSlots: string[] = (() => {
     if (!selectedDate) return [];
-    const dow = new Date(selectedDate + "T00:00:00").getDay();
-    const wh = workingHours.find((w) => w.day_of_week === dow);
-    if (!wh || !wh.is_working) return [];
-    const slots = generateSlots(wh.start_time, wh.end_time);
+    const eff = getEffectiveHours(selectedDate);
+    if (!eff || !eff.is_working) return [];
+    const slots = generateSlots(eff.start_time, eff.end_time);
 
     // Same-day filter: hide past slots and apply a 30-minute buffer.
     // Use the business's local timezone (Europe/Athens) for "now".
@@ -361,9 +402,8 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                           }
                         }
                         // Also block slots whose service-duration would exceed working hours
-                        const dow = new Date(selectedDate + "T00:00:00").getDay();
-                        const wh = workingHours.find((w) => w.day_of_week === dow);
-                        if (wh && start + dur > toMin(wh.end_time)) unavailable = true;
+                        const eff = getEffectiveHours(selectedDate);
+                        if (eff && eff.is_working && start + dur > toMin(eff.end_time)) unavailable = true;
 
                         return (
                           <button

@@ -17,6 +17,7 @@ import BlockedDatesManager from "@/components/admin/BlockedDatesManager";
 import ServiceManager from "@/components/admin/ServiceManager";
 import CalendarView from "@/components/admin/CalendarView";
 import ScheduleManager from "@/components/admin/ScheduleManager";
+import TwoWeekScheduleManager from "@/components/admin/TwoWeekScheduleManager";
 import TodayView from "@/components/admin/TodayView";
 
 type Booking = {
@@ -415,7 +416,8 @@ const AdminDashboard = () => {
           </TabsContent>
 
           {/* Schedules Tab */}
-          <TabsContent value="schedules">
+          <TabsContent value="schedules" className="space-y-6">
+            <TwoWeekScheduleManager barbers={barbers} locations={locations} />
             <ScheduleManager barbers={barbers} locations={locations} />
           </TabsContent>
 
