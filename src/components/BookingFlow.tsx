@@ -156,12 +156,11 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   const { data: bookedSlots = [] } = useQuery<{ booking_time: string; duration_at_booking: number | null }[]>({
     queryKey: ["booked_slots", selectedBarber?.id, selectedDate],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("bookings")
-        .select("booking_time,duration_at_booking")
-        .eq("barber_id", selectedBarber!.id)
-        .eq("booking_date", selectedDate)
-        .neq("status", "cancelled");
+      // Public RPC that returns only time + duration (no PII)
+      const { data } = await supabase.rpc("get_booked_slots", {
+        _barber_id: selectedBarber!.id,
+        _date: selectedDate,
+      });
       return (data || []).map((b: any) => ({
         booking_time: trimTime(b.booking_time),
         duration_at_booking: b.duration_at_booking,
@@ -268,6 +267,17 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
   const handleSubmit = async () => {
     if (!selectedLocation || !selectedService || !selectedBarber || !selectedDate || !selectedTime || !customerName || !customerPhone) return;
+    // Client-side validation (server enforces too)
+    const name = customerName.trim();
+    const phone = customerPhone.trim();
+    if (name.length < 2 || name.length > 100) {
+      toast.error("Please enter a valid name");
+      return;
+    }
+    if (!/^[0-9 +()\-]{6,30}$/.test(phone)) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
     setSubmitting(true);
     const { error } = await supabase.from("bookings").insert({
       location_id: selectedLocation.id,
@@ -275,10 +285,9 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       barber_id: selectedBarber.id,
       booking_date: selectedDate,
       booking_time: selectedTime,
-      customer_name: customerName.trim(),
-      customer_phone: customerPhone.trim(),
-      price_at_booking: selectedService.price,
-      duration_at_booking: selectedService.duration_minutes,
+      customer_name: name,
+      customer_phone: phone,
+      // status, price_at_booking, duration_at_booking are set server-side by trigger
     });
     setSubmitting(false);
     if (error) {
