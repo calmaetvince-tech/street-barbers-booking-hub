@@ -204,9 +204,22 @@ const AdminDashboard = () => {
           <h1 className="font-display text-2xl md:text-3xl tracking-wider">STREET BARBERS</h1>
           <p className="text-muted-foreground text-xs font-body">Control Panel</p>
         </div>
-        <Button variant="ghost" size="sm" onClick={signOut}>
-          <LogOut className="w-4 h-4 mr-2" /> Sign Out
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <Settings className="w-4 h-4 mr-2" /> Account
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem onSelect={() => setPasswordDialogOpen(true)}>
+              <KeyRound className="w-4 h-4 mr-2" /> Change password
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={signOut}>
+              <LogOut className="w-4 h-4 mr-2" /> Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
       <main className="p-3 sm:p-4 md:p-8 max-w-7xl mx-auto space-y-6">
