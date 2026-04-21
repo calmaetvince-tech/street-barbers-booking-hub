@@ -468,7 +468,16 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                   </div>
                   <div>
                     <label className="block text-sm text-muted-foreground font-body mb-1">Phone Number</label>
-                    <input type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="+30 694 123 4567" className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors" />
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                      placeholder="6941234567"
+                      className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1 font-body">10 digits, starting with 69 or 2</p>
                   </div>
                 </div>
 
