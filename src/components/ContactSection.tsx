@@ -50,7 +50,7 @@ const ContactSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
-              className="bg-card border border-border overflow-hidden"
+              className="bg-card border border-border overflow-hidden premium-lift"
             >
               {/* Shop photo — grayscale, high contrast */}
               <div className="aspect-[4/3] overflow-hidden">
