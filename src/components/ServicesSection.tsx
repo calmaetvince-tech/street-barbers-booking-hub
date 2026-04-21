@@ -27,7 +27,7 @@ const ServicesSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-background p-10 text-center premium-lift"
+              className="bg-background p-10 text-center"
             >
               <h3 className="font-display text-2xl tracking-wider text-foreground mb-4">{service.name}</h3>
               <p className="font-body text-3xl font-light text-foreground">{service.price}</p>

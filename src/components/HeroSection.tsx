@@ -1,10 +1,8 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-barbershop.jpg";
 import heroMobileImage from "@/assets/hero-center-team.jpg";
 import heroCenterImage from "@/assets/hero-team-original.jpg";
 import { Phone, MapPin } from "lucide-react";
-import { useRef } from "react";
-import BarberPole from "@/components/BarberPole";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,23 +15,9 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  // Subtle parallax — background moves slower than foreground text
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", reduceMotion ? "0%" : "18%"]);
-  const fgY = useTransform(scrollYProgress, [0, 1], ["0%", reduceMotion ? "0%" : "-8%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.4]);
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-start justify-center overflow-hidden pt-24 md:pt-24"
-    >
-      <motion.div className="absolute inset-0" style={{ y: bgY }}>
+    <section className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-start justify-center overflow-hidden pt-24 md:pt-24">
+      <div className="absolute inset-0">
         {/* Desktop: full composition with new center image overlay */}
         <img
           src={heroImage}
@@ -61,31 +45,24 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
         <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background z-[2]" />
         <div className="md:hidden absolute inset-0 bg-gradient-to-b from-background/10 via-background/5 to-background/90 z-[2]" />
-      </motion.div>
+      </div>
 
-      <motion.div
-        className="relative z-10 container mx-auto px-6 text-center"
-        style={{ y: fgY, opacity: heroOpacity }}
-      >
+      <div className="relative z-10 container mx-auto px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col gap-8"
         >
-          <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none animate-float-y">
+          <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none">
             PREMIUM CUTS
             <br />
             IN RHODES
           </h1>
 
-          <div className="flex items-center justify-center gap-4 order-3">
-            <BarberPole className="hidden md:block" />
-            <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm tracking-wide">
-              Precision grooming. Timeless style.
-            </p>
-            <BarberPole className="hidden md:block" />
-          </div>
+          <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide order-3">
+            Precision grooming. Timeless style.
+          </p>
 
           <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-sm font-body order-4">
             <MapPin className="w-4 h-4" />
@@ -156,7 +133,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             </DropdownMenu>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 };
