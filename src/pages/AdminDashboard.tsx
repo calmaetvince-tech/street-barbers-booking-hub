@@ -499,6 +499,8 @@ const AdminDashboard = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      <ChangePasswordDialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen} />
     </div>
   );
 };
