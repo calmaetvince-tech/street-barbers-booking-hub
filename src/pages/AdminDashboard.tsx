@@ -18,6 +18,15 @@ import ServiceManager from "@/components/admin/ServiceManager";
 import CalendarView from "@/components/admin/CalendarView";
 import TwoWeekScheduleManager from "@/components/admin/TwoWeekScheduleManager";
 import TodayView from "@/components/admin/TodayView";
+import ChangePasswordDialog from "@/components/admin/ChangePasswordDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Settings, KeyRound } from "lucide-react";
 
 type Booking = {
   id: string;
