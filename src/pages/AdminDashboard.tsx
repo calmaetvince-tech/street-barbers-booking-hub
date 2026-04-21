@@ -69,6 +69,7 @@ const AdminDashboard = () => {
   const [filterBarber, setFilterBarber] = useState("all");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [form, setForm] = useState({
     customer_name: "",
     customer_phone: "",
