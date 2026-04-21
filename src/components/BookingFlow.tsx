@@ -270,12 +270,12 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     // Client-side validation (server enforces too)
     const name = customerName.trim();
     const phone = customerPhone.trim();
-    if (name.length < 2 || name.length > 100) {
-      toast.error("Please enter a valid name");
+    if (name.length < 2 || name.length > 50) {
+      toast.error("Name must be between 2 and 50 characters");
       return;
     }
-    if (!/^[0-9 +()\-]{6,30}$/.test(phone)) {
-      toast.error("Please enter a valid phone number");
+    if (!/^(69\d{8}|2\d{9})$/.test(phone)) {
+      toast.error("Enter a valid Greek phone (10 digits, starting with 69 or 2)");
       return;
     }
     setSubmitting(true);
@@ -468,7 +468,16 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                   </div>
                   <div>
                     <label className="block text-sm text-muted-foreground font-body mb-1">Phone Number</label>
-                    <input type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="+30 694 123 4567" className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors" />
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                      placeholder="6941234567"
+                      className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1 font-body">10 digits, starting with 69 or 2</p>
                   </div>
                 </div>
 
