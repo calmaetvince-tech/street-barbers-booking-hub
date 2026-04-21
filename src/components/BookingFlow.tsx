@@ -270,12 +270,12 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     // Client-side validation (server enforces too)
     const name = customerName.trim();
     const phone = customerPhone.trim();
-    if (name.length < 2 || name.length > 100) {
-      toast.error("Please enter a valid name");
+    if (name.length < 2 || name.length > 50) {
+      toast.error("Name must be between 2 and 50 characters");
       return;
     }
-    if (!/^[0-9 +()\-]{6,30}$/.test(phone)) {
-      toast.error("Please enter a valid phone number");
+    if (!/^(69\d{8}|2\d{9})$/.test(phone)) {
+      toast.error("Enter a valid Greek phone (10 digits, starting with 69 or 2)");
       return;
     }
     setSubmitting(true);
