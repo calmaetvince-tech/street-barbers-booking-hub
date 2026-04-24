@@ -48,7 +48,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col gap-8"
         >
-          <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none">
+          <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none md:relative md:z-20 md:mix-blend-difference">
             PREMIUM CUTS
             <br />
             IN RHODES
