@@ -15,18 +15,29 @@ interface HeroSectionProps {
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-start justify-center overflow-hidden pt-24 md:pt-24">
-      {/* Desktop background image layer */}
-      <div className="hidden md:block absolute inset-0">
+      <div className="absolute inset-0">
         {/* Desktop: only the center hero image, centered on background */}
         <img
           src={heroCenterImage}
           alt="Street Barbers team"
-          className="absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[3]"
+          className="hidden md:block absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[3]"
           width={1920}
           height={1080}
           fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background z-[2]" />
+
+        {/* Mobile: same image, zoomed and positioned */}
+        <img
+          src={heroCenterImage}
+          alt="Street Barbers team"
+          className="md:hidden absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] max-w-none h-auto object-contain z-[3]"
+          width={1080}
+          height={1920}
+          fetchPriority="high"
+        />
+
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background z-[2]" />
+        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-background/10 via-background/5 to-background/90 z-[2]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 text-center pt-20 md:pt-0">
