@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import heroMobileImage from "@/assets/hero-center-team.jpg";
 import heroCenterImage from "@/assets/hero-team-refined.jpg";
 import { Phone, MapPin } from "lucide-react";
 import {
@@ -16,29 +15,18 @@ interface HeroSectionProps {
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-start justify-center overflow-hidden pt-24 md:pt-24">
-      <div className="absolute inset-0">
+      {/* Desktop background image layer */}
+      <div className="hidden md:block absolute inset-0">
         {/* Desktop: only the center hero image, centered on background */}
         <img
           src={heroCenterImage}
           alt="Street Barbers team"
-          className="hidden md:block absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[3]"
+          className="absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[3]"
           width={1920}
           height={1080}
           fetchPriority="high"
         />
-
-        {/* Mobile: single strong image, full-bleed */}
-        <img
-          src={heroCenterImage}
-          alt="Street Barbers team"
-          className="md:hidden absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] max-w-none h-auto object-contain z-[3]"
-          width={1080}
-          height={1920}
-          fetchPriority="high"
-        />
-
-        <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background z-[2]" />
-        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-background/10 via-background/5 to-background/90 z-[2]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background z-[2]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 text-center pt-20 md:pt-0">
@@ -67,7 +55,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             <span>Mon–Sat 10:00–21:00</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-60 md:pt-48 order-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 md:pt-48 order-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <motion.button
@@ -126,6 +114,16 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
+          {/* Mobile: image displayed below the content stack */}
+          <img
+            src={heroCenterImage}
+            alt="Street Barbers team"
+            className="md:hidden w-full h-auto object-contain order-5 mt-4"
+            width={1080}
+            height={1920}
+            fetchPriority="high"
+          />
         </motion.div>
       </div>
     </section>
