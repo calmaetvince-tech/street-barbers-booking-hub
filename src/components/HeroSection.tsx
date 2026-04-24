@@ -66,7 +66,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             <span>Mon–Sat 10:00–21:00</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 md:pt-48 order-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-60 md:pt-48 order-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <motion.button
@@ -125,16 +125,6 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-
-          {/* Mobile: image displayed below the content stack */}
-          <img
-            src={heroCenterImage}
-            alt="Street Barbers team"
-            className="md:hidden w-full h-auto object-contain order-5 mt-4"
-            width={1080}
-            height={1920}
-            fetchPriority="high"
-          />
         </motion.div>
       </div>
     </section>
