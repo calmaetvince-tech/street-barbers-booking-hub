@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import heroImage from "@/assets/hero-barbershop.jpg";
 import heroMobileImage from "@/assets/hero-center-team.jpg";
 import heroCenterImage from "@/assets/hero-team-original.jpg";
 import { Phone, MapPin } from "lucide-react";
@@ -18,19 +17,14 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-start justify-center overflow-hidden pt-24 md:pt-24">
       <div className="absolute inset-0">
-        {/* Desktop: full composition with new center image overlay */}
-        <img
-          src={heroImage}
-          alt="Street Barbers"
-          className="hidden md:block w-full h-full object-cover"
-          width={1920}
-          height={1080}
-          fetchPriority="high"
-        />
+        {/* Desktop: only the center hero image, centered on background */}
         <img
           src={heroCenterImage}
           alt="Street Barbers team"
           className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[3]"
+          width={1920}
+          height={1080}
+          fetchPriority="high"
         />
 
         {/* Mobile: single strong image, full-bleed */}
