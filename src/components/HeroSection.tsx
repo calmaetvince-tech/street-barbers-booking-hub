@@ -29,9 +29,9 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
         {/* Mobile: single strong image, full-bleed */}
         <img
-          src={heroMobileImage}
+          src={heroCenterImage}
           alt="Street Barbers team"
-          className="md:hidden absolute inset-0 w-full h-full object-cover object-[12%_35%]"
+          className="md:hidden absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] w-auto object-contain z-[3]"
           width={1080}
           height={1920}
           fetchPriority="high"
