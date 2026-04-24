@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import heroMobileImage from "@/assets/hero-center-team.jpg";
 import heroCenterImage from "@/assets/hero-team-refined.jpg";
 import { Phone, MapPin } from "lucide-react";
 import {
