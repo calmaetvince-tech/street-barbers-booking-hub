@@ -1,4 +1,5 @@
 import heroCenterImage from "@/assets/hero-team-refined.jpg";
+import evolutionVideo from "@/assets/evolution.mp4";
 import { Phone, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
@@ -16,6 +17,16 @@ interface HeroSectionProps {
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16">
+      <video
+        src={evolutionVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      />
+      <div className="absolute inset-0 bg-black/60 z-0" />
+      <div className="relative z-10">
       <ContainerScroll
         titleComponent={
           <div className="flex flex-col gap-6 md:gap-8 px-4">
@@ -109,6 +120,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           fetchPriority="high"
         />
       </ContainerScroll>
+      </div>
     </section>
   );
 };
