@@ -4,14 +4,7 @@ import ServicesSection from "@/components/ServicesSection";
 import GallerySection from "@/components/GallerySection";
 import BookingFlow from "@/components/BookingFlow";
 import ContactSection from "@/components/ContactSection";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-
-import { Phone } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 const Index = () => {
   const bookingRef = useRef<HTMLDivElement>(null);
@@ -32,28 +25,13 @@ const Index = () => {
             <a href="#booking" className="hover:text-foreground transition-colors">Book</a>
             <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="inline-flex items-center gap-2 bg-foreground text-background font-body font-semibold px-5 py-2 text-xs uppercase tracking-widest">
-                <Phone className="w-3 h-3" />
-                Call
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="font-body">
-              <DropdownMenuItem asChild>
-                <a href="tel:+302241601358" className="cursor-pointer flex flex-col items-start gap-0.5 py-2">
-                  <span className="text-xs uppercase tracking-widest">Street Barbers Center</span>
-                  <span className="text-muted-foreground text-xs">2241 601358</span>
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="tel:+302241601568" className="cursor-pointer flex flex-col items-start gap-0.5 py-2">
-                  <span className="text-xs uppercase tracking-widest">Street Barbers Ialyssos</span>
-                  <span className="text-muted-foreground text-xs">2241 601568</span>
-                </a>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <button
+            onClick={scrollToBooking}
+            className="inline-flex items-center gap-2 bg-foreground text-background font-body font-semibold px-5 py-2 text-xs uppercase tracking-widest"
+          >
+            <Calendar className="w-3 h-3" />
+            Book Now
+          </button>
         </div>
       </nav>
 
