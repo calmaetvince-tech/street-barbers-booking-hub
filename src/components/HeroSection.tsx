@@ -17,25 +17,24 @@ interface HeroSectionProps {
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16">
+      <video
+        src={evolutionVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[160%] h-[120%] md:w-[130%] md:h-[110%] object-cover object-center z-0 pointer-events-none"
+      />
+      <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none" />
+      <div className="relative z-10">
       <ContainerScroll
         titleComponent={
           <div className="flex flex-col gap-6 md:gap-8 px-4">
-            <div className="relative py-12 md:py-24">
-              <video
-                src={evolutionVideo}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[160%] object-cover object-center z-0"
-              />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[160%] bg-black/60 z-0" />
-              <h1 className="relative z-10 font-display text-5xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none">
-                PREMIUM CUTS
-                <br />
-                IN RHODES
-              </h1>
-            </div>
+            <h1 className="font-display text-5xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none">
+              PREMIUM CUTS
+              <br />
+              IN RHODES
+            </h1>
 
             <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide">
               Precision grooming. Timeless style.
@@ -121,6 +120,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           fetchPriority="high"
         />
       </ContainerScroll>
+      </div>
     </section>
   );
 };
