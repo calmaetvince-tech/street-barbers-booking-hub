@@ -23,7 +23,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         loop
         muted
         playsInline
-        className="absolute -top-[8%] md:-top-[10%] left-1/2 -translate-x-1/2 w-[160%] h-[55%] md:w-[130%] md:h-[60%] object-cover object-center z-0 pointer-events-none"
+        className="absolute -top-[8%] md:-top-[10%] left-1/2 -translate-x-1/2 w-[160%] h-[55%] md:w-[130%] md:h-[60%] object-contain md:object-cover object-center z-0 pointer-events-none"
       />
       <div className="absolute -top-[8%] md:-top-[10%] left-0 right-0 h-[55%] md:h-[60%] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
