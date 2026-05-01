@@ -20,16 +20,16 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <ContainerScroll
         titleComponent={
           <div className="flex flex-col gap-6 md:gap-8 px-4">
-            <div className="relative py-8 md:py-16">
+            <div className="relative py-12 md:py-24">
               <video
                 src={evolutionVideo}
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[140%] object-cover object-center z-0"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[160%] object-cover object-center z-0"
               />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[140%] bg-black/60 z-0" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[160%] bg-black/60 z-0" />
               <h1 className="relative z-10 font-display text-5xl md:text-8xl lg:text-9xl font-normal tracking-wider text-foreground leading-none">
                 PREMIUM CUTS
                 <br />
