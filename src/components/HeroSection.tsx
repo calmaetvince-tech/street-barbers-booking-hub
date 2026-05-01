@@ -17,18 +17,17 @@ interface HeroSectionProps {
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16">
-      <div className="absolute -top-[8%] md:-top-[10%] left-1/2 -translate-x-1/2 w-[260%] md:w-[180%] h-[55%] md:h-[60%] bg-white z-0 pointer-events-none">
-        <video
-          src={evolutionVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[62%] md:w-[72%] h-full object-contain md:object-cover object-center pointer-events-none"
-        />
-      </div>
-      <div className="absolute -top-[8%] md:-top-[10%] left-0 right-0 h-[55%] md:h-[60%] bg-black/60 z-0 pointer-events-none" />
+      <div className="absolute -top-[8%] md:-top-[10%] left-0 right-0 h-[75%] md:h-[80%] bg-white z-0 pointer-events-none" />
+      <video
+        src={evolutionVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        className="absolute -top-[8%] md:-top-[10%] left-1/2 -translate-x-1/2 w-[160%] h-[55%] md:w-[130%] md:h-[60%] object-contain md:object-cover object-center z-0 pointer-events-none"
+      />
+      <div className="absolute -top-[8%] md:-top-[10%] left-0 right-0 h-[75%] md:h-[80%] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
       <ContainerScroll
         titleComponent={
