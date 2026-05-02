@@ -139,6 +139,15 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body pt-2">
+              <MapPin className="w-4 h-4" />
+              <span>Amerikis 40, Rhodes</span>
+              <span>·</span>
+              <span>Irakleidon Avenue, Ialyssos</span>
+              <span className="hidden md:inline mx-2">·</span>
+              <span className="w-full md:w-auto">Mon–Sat 10:00–21:00</span>
+            </div>
           </div>
         }
       >
