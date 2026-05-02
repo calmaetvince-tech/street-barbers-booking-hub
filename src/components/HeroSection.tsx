@@ -22,22 +22,36 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
     const v = videoRef.current;
     if (!v) return;
     v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute("muted", "");
+    v.setAttribute("playsinline", "");
     const tryPlay = () => v.play().catch(() => {});
     tryPlay();
+    v.addEventListener("loadedmetadata", tryPlay);
+    v.addEventListener("loadeddata", tryPlay);
+    v.addEventListener("canplay", tryPlay);
     const onVisible = () => {
       if (document.visibilityState === "visible") tryPlay();
     };
     document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("touchstart", tryPlay, { once: true });
-    window.addEventListener("click", tryPlay, { once: true });
+    const userInteract = () => tryPlay();
+    window.addEventListener("touchstart", userInteract, { passive: true });
+    window.addEventListener("click", userInteract);
+    window.addEventListener("scroll", userInteract, { passive: true });
     return () => {
       document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("touchstart", userInteract);
+      window.removeEventListener("click", userInteract);
+      window.removeEventListener("scroll", userInteract);
+      v.removeEventListener("loadedmetadata", tryPlay);
+      v.removeEventListener("loadeddata", tryPlay);
+      v.removeEventListener("canplay", tryPlay);
     };
   }, []);
 
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16">
-      <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[55vh] md:h-[90vh] bg-white z-0 pointer-events-none" />
+      <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[75vh] md:h-[105vh] bg-white z-0 pointer-events-none" />
       <video
         ref={videoRef}
         src={evolutionVideo}
@@ -49,9 +63,9 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         // @ts-ignore - iOS Safari attribute
         webkit-playsinline="true"
         x5-playsinline="true"
-        className="absolute top-16 md:-top-[10vh] left-1/2 -translate-x-1/2 w-[160%] h-[40vh] md:w-[130%] md:h-[75vh] object-contain md:object-cover object-center z-0 pointer-events-none"
+        className="absolute top-16 md:-top-[10vh] left-1/2 -translate-x-1/2 w-[160%] h-[55vh] md:w-[130%] md:h-[75vh] object-contain md:object-cover object-center z-0 pointer-events-none"
       />
-      <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[55vh] md:h-[90vh] bg-black/60 z-0 pointer-events-none" />
+      <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[75vh] md:h-[105vh] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
       <ContainerScroll
         titleComponent={
