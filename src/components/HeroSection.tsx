@@ -2,6 +2,7 @@ import heroCenterImage from "@/assets/hero-team-refined.jpg";
 import evolutionVideo from "@/assets/evolution.mp4";
 import { Phone, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import {
   DropdownMenu,
@@ -15,17 +16,41 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") tryPlay();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("touchstart", tryPlay, { once: true });
+    window.addEventListener("click", tryPlay, { once: true });
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16">
       <div className="absolute -top-[8%] md:-top-[10%] left-0 right-0 h-[75%] md:h-[80%] bg-white z-0 pointer-events-none" />
       <video
+        ref={videoRef}
         src={evolutionVideo}
         autoPlay
         loop
         muted
+        defaultMuted
         playsInline
         preload="auto"
-        className="absolute -top-[8%] md:-top-[20%] left-1/2 -translate-x-1/2 w-[160%] h-[75%] md:w-[130%] md:h-[80%] object-contain md:object-cover object-center z-0 pointer-events-none"
+        // @ts-ignore - iOS Safari attribute
+        webkit-playsinline="true"
+        x5-playsinline="true"
+        className="absolute -top-[8%] md:-top-[20%] left-1/2 -translate-x-1/2 w-[160%] h-[90%] md:w-[130%] md:h-[95%] object-contain md:object-cover object-center z-0 pointer-events-none"
       />
       <div className="absolute -top-[8%] md:-top-[10%] left-0 right-0 h-[75%] md:h-[80%] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
