@@ -76,7 +76,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               IN RHODES
             </h1>
 
-            <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide">
+            <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide mt-24 md:mt-40">
               Precision grooming. Timeless style.
             </p>
 
