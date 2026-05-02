@@ -63,7 +63,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         // @ts-ignore - iOS Safari attribute
         webkit-playsinline="true"
         x5-playsinline="true"
-        className="absolute top-16 md:-top-[10vh] left-1/2 -translate-x-1/2 w-[160%] h-[55vh] md:w-[130%] md:h-[75vh] object-contain object-center z-0 pointer-events-none"
+        className="absolute top-16 md:-top-[15vh] left-1/2 -translate-x-1/2 w-[160%] h-[55vh] md:w-[170%] md:h-[100vh] object-contain object-center z-0 pointer-events-none"
       />
       <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[75vh] md:h-[105vh] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
@@ -80,7 +80,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               Precision grooming. Timeless style.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-16 md:pt-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <motion.button
