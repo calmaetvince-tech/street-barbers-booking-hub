@@ -44,7 +44,6 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         autoPlay
         loop
         muted
-        defaultMuted
         playsInline
         preload="auto"
         // @ts-ignore - iOS Safari attribute
