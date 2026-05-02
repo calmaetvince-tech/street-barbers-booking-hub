@@ -69,7 +69,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <div className="relative z-10">
       <ContainerScroll
         titleComponent={
-          <div className="flex flex-col gap-6 md:gap-8 px-4 mt-64 md:mt-56">
+          <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-56">
             <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-foreground leading-none -mt-64 md:-mt-72">
               PREMIUM CUTS
               <br />
