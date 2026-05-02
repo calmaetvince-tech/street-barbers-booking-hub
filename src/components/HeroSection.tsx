@@ -63,7 +63,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         // @ts-ignore - iOS Safari attribute
         webkit-playsinline="true"
         x5-playsinline="true"
-        className="absolute top-16 md:-top-[10vh] left-1/2 -translate-x-1/2 w-[160%] h-[55vh] md:w-[130%] md:h-[75vh] object-contain md:object-cover object-center z-0 pointer-events-none"
+        className="absolute top-16 md:-top-[10vh] left-1/2 -translate-x-1/2 w-[160%] h-[55vh] md:w-[130%] md:h-[75vh] object-contain object-center z-0 pointer-events-none"
       />
       <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[75vh] md:h-[105vh] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
@@ -79,15 +79,6 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide">
               Precision grooming. Timeless style.
             </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body">
-              <MapPin className="w-4 h-4" />
-              <span>Amerikis 40, Rhodes</span>
-              <span>·</span>
-              <span>Irakleidon Avenue, Ialyssos</span>
-              <span className="hidden md:inline mx-2">·</span>
-              <span className="w-full md:w-auto">Mon–Sat 10:00–21:00</span>
-            </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <DropdownMenu>
