@@ -42,7 +42,7 @@ const ContactSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-12 md:mt-20">
           {locations.map((loc, i) => (
             <motion.div
               key={loc.name}
