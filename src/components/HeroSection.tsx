@@ -70,7 +70,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <ContainerScroll
         titleComponent={
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-32 md:mt-56">
-            <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-semibold md:font-normal tracking-wider text-foreground leading-none mt-4 md:-mt-20">
+            <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-foreground leading-none mt-4 md:-mt-20">
               PREMIUM CUTS
               <br />
               IN RHODES
@@ -80,7 +80,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               Precision grooming. Timeless style.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-16 md:pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-40 md:pt-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <motion.button
