@@ -70,13 +70,13 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <ContainerScroll
         titleComponent={
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-32 md:mt-56">
-            <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-foreground leading-none -mt-8 md:-mt-20">
+            <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-foreground leading-none -mt-16 md:-mt-20">
               PREMIUM CUTS
               <br />
               IN RHODES
             </h1>
 
-            <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide -mt-8 md:mt-40">
+            <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide -mt-14 md:mt-40">
               Precision grooming. Timeless style.
             </p>
 
@@ -140,7 +140,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               </DropdownMenu>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body -mt-2 md:mt-0 pt-0 md:pt-2">
               <MapPin className="w-4 h-4" />
               <span>Amerikis 40, Rhodes</span>
               <span>·</span>
