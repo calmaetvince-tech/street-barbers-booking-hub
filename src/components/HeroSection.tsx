@@ -37,7 +37,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16">
-      <div className="absolute -top-[8%] md:-top-[25%] left-0 right-0 h-[82%] md:h-[80%] bg-white z-0 pointer-events-none" />
+      <div className="absolute top-16 md:-top-[10vh] left-0 right-0 h-[40vh] md:h-[75vh] bg-white z-0 pointer-events-none" />
       <video
         ref={videoRef}
         src={evolutionVideo}
@@ -49,9 +49,9 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         // @ts-ignore - iOS Safari attribute
         webkit-playsinline="true"
         x5-playsinline="true"
-        className="absolute -top-[8%] md:-top-[28%] left-1/2 -translate-x-1/2 w-[160%] h-[82%] md:w-[130%] md:h-[80%] object-contain md:object-cover object-center z-0 pointer-events-none"
+        className="absolute top-16 md:-top-[10vh] left-1/2 -translate-x-1/2 w-[160%] h-[40vh] md:w-[130%] md:h-[75vh] object-contain md:object-cover object-center z-0 pointer-events-none"
       />
-      <div className="absolute -top-[8%] md:-top-[25%] left-0 right-0 h-[82%] md:h-[80%] bg-black/60 z-0 pointer-events-none" />
+      <div className="absolute top-16 md:-top-[10vh] left-0 right-0 h-[40vh] md:h-[75vh] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
       <ContainerScroll
         titleComponent={
