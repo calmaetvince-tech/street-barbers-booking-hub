@@ -80,7 +80,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               Precision grooming. Timeless style.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-40 md:pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-48 md:pt-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <motion.button
