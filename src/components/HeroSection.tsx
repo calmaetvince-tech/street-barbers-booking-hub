@@ -154,7 +154,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <img
           src={heroCenterImage}
           alt="Street Barbers team"
-          className="w-full h-full object-cover rounded-2xl block md:hidden"
+          className="w-full h-full object-cover rounded-2xl"
           width={1920}
           height={1080}
           fetchPriority="high"
