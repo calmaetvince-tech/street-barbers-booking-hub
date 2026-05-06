@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { Instagram } from "lucide-react";
-import galleryHero from "@/assets/gallery-hero.jpg";
 import galleryFadeSide from "@/assets/gallery-fade-side.jpg";
 import galleryOldStyle from "@/assets/gallery-old-style.jpg";
 import galleryDropFade from "@/assets/gallery-drop-fade.jpg";
@@ -152,15 +151,6 @@ const GallerySection = () => {
         </motion.div>
 
         <div className="max-w-6xl mx-auto space-y-3">
-          {/* Hero — single dominant B&W image */}
-          <GalleryImage
-            src={galleryHero}
-            alt="Street Barbers team — the crew"
-            className="aspect-[21/9] w-full"
-            index={0}
-            bw
-          />
-
           {/* ===== CENTER LOCATION ===== */}
           <LocationGalleryBlock
             label="Location 01"
