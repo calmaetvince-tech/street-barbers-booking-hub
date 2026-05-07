@@ -49,13 +49,13 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden flex flex-col lg:block pt-0 mt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen" style={{ backgroundColor: "#1a1a1a" }}>
-      <h1 className="lg:hidden font-display text-base sm:text-lg font-semibold tracking-[0.15em] text-white leading-none text-center pt-20 pb-3 px-4" style={{ backgroundColor: "#1a1a1a" }}>
+    <section className="relative overflow-hidden flex flex-col lg:block pt-0 mt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen bg-black lg:bg-[#1a1a1a]">
+      <h1 className="lg:hidden font-display text-base sm:text-lg font-semibold tracking-[0.15em] text-white leading-none text-center pt-20 pb-3 px-4 bg-black">
         STREET BARBERS
         <br />
         RHODES
       </h1>
-      <div className="relative w-full aspect-[100/55.81] mt-0 lg:mt-0 lg:absolute lg:inset-0 lg:aspect-auto" style={{ backgroundColor: "#1a1a1a" }}>
+      <div className="relative w-full aspect-[100/55.81] mt-0 lg:mt-0 lg:absolute lg:inset-0 lg:aspect-auto bg-black lg:bg-[#1a1a1a]">
         <video
           ref={videoRef}
           src={evolutionVideo}
@@ -65,11 +65,10 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           playsInline
           preload="auto"
           aria-hidden
-          className="absolute inset-0 w-full h-full object-contain object-center lg:scale-100 z-0 pointer-events-none"
-          style={{ backgroundColor: "#1a1a1a" }}
+          className="absolute inset-0 w-full h-full object-contain object-center lg:scale-100 z-0 pointer-events-none bg-black lg:bg-[#1a1a1a]"
         />
       </div>
-      <div className="relative z-10 lg:min-h-0 lg:block mt-0 pt-0 bg-[#1a1a1a] lg:bg-transparent">
+      <div className="relative z-10 lg:min-h-0 lg:block mt-0 pt-0 bg-black lg:bg-transparent">
         <div className="max-w-5xl mx-auto text-center pb-0 lg:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-0 lg:mt-80">
             <h1 className="hidden lg:block font-display md:text-6xl lg:text-7xl md:font-normal md:tracking-wider text-white leading-none lg:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
