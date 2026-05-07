@@ -50,6 +50,17 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16 bg-[#111111]">
       <div className="absolute inset-0 bg-[#111111] z-0 pointer-events-none" />
+      {/* Stretched + blurred backdrop of the same animation to fill all gaps */}
+      <video
+        src={evolutionVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden
+        className="absolute inset-0 w-full h-full object-cover scale-[2] blur-2xl opacity-90 z-0 pointer-events-none"
+      />
       <video
         ref={videoRef}
         src={evolutionVideo}
@@ -61,7 +72,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         // @ts-ignore - iOS Safari attribute
         webkit-playsinline="true"
         x5-playsinline="true"
-        className="absolute top-0 md:-top-[10vh] left-1/2 -translate-x-1/2 w-full h-[65vh] md:h-[90vh] object-contain object-center z-0 pointer-events-none [mask-image:radial-gradient(ellipse_70%_70%_at_center,_black_55%,_transparent_100%)] [-webkit-mask-image:radial-gradient(ellipse_70%_70%_at_center,_black_55%,_transparent_100%)]"
+        className="absolute top-0 md:-top-[10vh] left-1/2 -translate-x-1/2 w-full h-[65vh] md:h-[90vh] object-contain object-center z-0 pointer-events-none"
       />
       <div className="absolute top-0 md:-top-[10vh] left-0 right-0 h-[65vh] md:h-[90vh] bg-black/20 z-0 pointer-events-none" />
       <div className="relative z-10">
