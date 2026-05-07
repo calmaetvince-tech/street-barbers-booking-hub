@@ -1,6 +1,5 @@
 import evolutionVideo from "@/assets/hero-animation.mp4";
 import evolutionImage from "@/assets/evolution.png";
-import figureCutout from "@/assets/figure-cutout.png";
 import { Phone, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
@@ -62,13 +61,6 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         aria-hidden
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
         style={{ backgroundColor: "#1a1a1a", objectPosition: "center center" }}
-      />
-      <img
-        src={figureCutout}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 w-full h-full object-cover z-20 pointer-events-none"
-        style={{ objectPosition: "center center" }}
       />
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
