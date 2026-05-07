@@ -59,19 +59,19 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         playsInline
         preload="auto"
         aria-hidden
-        className="absolute inset-0 w-full h-full object-cover lg:object-contain z-0 pointer-events-none"
-        style={{ backgroundColor: "#1a1a1a", objectPosition: "center 90%" }}
+        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+        style={{ backgroundColor: "#1a1a1a", objectPosition: "center center" }}
       />
       <div className="relative z-10 min-h-[calc(100vh-5rem)] flex flex-col justify-center md:block">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-0 md:mt-80">
-            <h1 className="font-display text-base sm:text-lg md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.15em] md:tracking-wider text-white leading-none mt-0 md:-mt-64 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+            <h1 className="font-display text-base sm:text-lg md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.15em] md:tracking-wider text-white leading-none mt-0 md:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               STREET BARBERS
               <br />
               RHODES
             </h1>
 
-            <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide mt-4 md:mt-96">
+            <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide mt-4 md:mt-64">
               Precision grooming. Timeless style.
             </p>
 
