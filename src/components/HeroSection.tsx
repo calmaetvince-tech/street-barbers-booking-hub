@@ -49,8 +49,6 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen bg-[#111111]">
-      <div className="absolute inset-0 bg-[#111111] z-0 pointer-events-none" />
-      {/* Stretched + blurred backdrop of the same animation to fill all gaps */}
       <video
         src={evolutionVideo}
         autoPlay
