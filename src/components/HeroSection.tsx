@@ -79,7 +79,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               STREET BARBERS
             </h1>
 
-            <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide mt-4 lg:mt-64">
+            <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide mt-4 lg:mt-64 tagline-glow">
               Precision grooming. Timeless style.
             </p>
 
