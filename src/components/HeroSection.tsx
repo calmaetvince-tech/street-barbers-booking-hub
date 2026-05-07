@@ -66,7 +66,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[75vh] md:h-[105vh] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
-          <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-56">
+          <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-80">
             <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-foreground leading-none -mt-64 md:-mt-40">
               PREMIUM CUTS
               <br />
