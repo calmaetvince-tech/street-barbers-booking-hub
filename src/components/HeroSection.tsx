@@ -151,14 +151,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           </div>
         }
       >
-        <img
-          src={heroCenterImage}
-          alt="Street Barbers team"
-          className="w-full h-full object-cover rounded-2xl"
-          width={1920}
-          height={1080}
-          fetchPriority="high"
-        />
+        <div className="w-full h-full rounded-2xl bg-[#222222]" />
       </ContainerScroll>
       </div>
     </section>

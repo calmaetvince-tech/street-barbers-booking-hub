@@ -5,6 +5,7 @@ import GallerySection from "@/components/GallerySection";
 import BookingFlow from "@/components/BookingFlow";
 import ContactSection from "@/components/ContactSection";
 import { Calendar } from "lucide-react";
+import heroCenterImage from "@/assets/hero-team-refined.jpg";
 
 const Index = () => {
   const bookingRef = useRef<HTMLDivElement>(null);
@@ -38,6 +39,15 @@ const Index = () => {
       <HeroSection onBookNow={scrollToBooking} />
       <ServicesSection />
       <BookingFlow ref={bookingRef} />
+      <section className="container mx-auto px-6 py-12">
+        <img
+          src={heroCenterImage}
+          alt="Street Barbers team"
+          className="w-full h-auto object-cover rounded-2xl"
+          width={1920}
+          height={1080}
+        />
+      </section>
       <ContactSection />
       <GallerySection />
       
