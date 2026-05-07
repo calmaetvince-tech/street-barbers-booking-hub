@@ -59,13 +59,13 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         playsInline
         preload="auto"
         aria-hidden
-        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-contain lg:object-cover z-0 pointer-events-none"
         style={{ backgroundColor: "#1a1a1a", objectPosition: "center center" }}
       />
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-80">
-            <h1 className="font-display text-3xl md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-white leading-none -mt-72 md:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+            <h1 className="font-display text-xl sm:text-2xl md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.15em] md:tracking-wider text-white leading-none -mt-72 md:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               STREET BARBERS
               <br />
               RHODES
