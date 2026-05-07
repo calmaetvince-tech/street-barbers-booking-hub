@@ -5,7 +5,7 @@ import GallerySection from "@/components/GallerySection";
 import BookingFlow from "@/components/BookingFlow";
 import ContactSection from "@/components/ContactSection";
 import { Calendar } from "lucide-react";
-import heroCenterImage from "@/assets/hero-team-refined.jpg";
+import heroCenterImage from "@/assets/hero-team-original.jpg";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 
 const Index = () => {
