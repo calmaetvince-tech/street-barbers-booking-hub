@@ -54,7 +54,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         src={evolutionImage}
         alt=""
         aria-hidden
-        className="absolute inset-0 w-full h-full object-contain object-bottom z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
         style={{ backgroundColor: "#1a1a1a" }}
       />
       <div className="relative z-10">
