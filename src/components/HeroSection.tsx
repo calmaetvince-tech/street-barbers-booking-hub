@@ -1,9 +1,7 @@
-import heroCenterImage from "@/assets/hero-team-refined.jpg";
 import evolutionVideo from "@/assets/evolution.mp4";
 import { Phone, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
-import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -67,8 +65,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       />
       <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[75vh] md:h-[105vh] bg-black/60 z-0 pointer-events-none" />
       <div className="relative z-10">
-      <ContainerScroll
-        titleComponent={
+        <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-56">
             <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-foreground leading-none -mt-64 md:-mt-72">
               PREMIUM CUTS
@@ -149,10 +146,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               <span className="w-full md:w-auto">Mon–Sat 10:00–21:00</span>
             </div>
           </div>
-        }
-      >
-        <div className="w-full h-full rounded-2xl bg-[#222222]" />
-      </ContainerScroll>
+        </div>
       </div>
     </section>
   );
