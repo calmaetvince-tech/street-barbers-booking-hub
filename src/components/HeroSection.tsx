@@ -52,8 +52,6 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
     <section className="relative overflow-hidden flex flex-col lg:block pt-0 mt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen bg-black lg:bg-[#1a1a1a]">
       <h1 className="lg:hidden font-display text-base sm:text-lg font-semibold tracking-[0.15em] text-white leading-none text-center pt-20 pb-3 px-4 bg-black">
         STREET BARBERS
-        <br />
-        RHODES
       </h1>
       <div className="relative w-full aspect-[100/55.81] mt-0 lg:mt-0 lg:absolute lg:inset-0 lg:aspect-auto bg-black lg:bg-[#1a1a1a]">
         <video
