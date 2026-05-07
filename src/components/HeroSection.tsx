@@ -50,12 +50,17 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen" style={{ backgroundColor: "#1a1a1a" }}>
-      <img
-        src={evolutionImage}
-        alt=""
+      <video
+        ref={videoRef}
+        src={evolutionVideo}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
         aria-hidden
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
-        style={{ backgroundColor: "#1a1a1a", objectPosition: "center 90%" }}
+        style={{ backgroundColor: "#1a1a1a", objectPosition: "center center" }}
       />
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
