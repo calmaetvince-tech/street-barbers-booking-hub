@@ -48,8 +48,19 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-20 md:pt-16 bg-[#111111]">
-      <div className="absolute inset-0 bg-[#111111] z-0 pointer-events-none" />
+    <section className="relative overflow-hidden pt-20 md:pt-16 bg-[#1a1a1a]">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#2a2a2a_0%,_#1a1a1a_45%,_#111111_100%)] z-0 pointer-events-none" />
+      {/* blurred backdrop video to extend gray glow into the surroundings */}
+      <video
+        src={evolutionVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden
+        className="absolute inset-0 w-full h-full object-cover scale-150 opacity-60 blur-3xl z-0 pointer-events-none"
+      />
       <video
         ref={videoRef}
         src={evolutionVideo}
@@ -63,7 +74,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         x5-playsinline="true"
         className="absolute top-0 md:-top-[10vh] left-1/2 -translate-x-1/2 w-full h-[65vh] md:h-[90vh] object-contain object-center z-0 pointer-events-none"
       />
-      <div className="absolute top-0 md:-top-[10vh] left-0 right-0 h-[65vh] md:h-[90vh] bg-[#111111]/20 z-0 pointer-events-none" />
+      <div className="absolute top-0 md:-top-[10vh] left-0 right-0 h-[65vh] md:h-[90vh] bg-black/20 z-0 pointer-events-none" />
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-80">
