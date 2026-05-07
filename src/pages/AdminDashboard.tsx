@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { LogOut, Plus, Pencil, Trash2 } from "lucide-react";
@@ -70,6 +71,7 @@ const AdminDashboard = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [form, setForm] = useState({
     customer_name: "",
     customer_phone: "",
@@ -129,6 +131,46 @@ const AdminDashboard = () => {
     if (error) { toast.error("Failed to delete"); return; }
     setBookings((prev) => prev.filter((b) => b.id !== id));
     toast.success("Booking deleted");
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length && filtered.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((b) => b.id)));
+    }
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const bulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!confirm(`Delete ${ids.length} booking${ids.length > 1 ? "s" : ""}?`)) return;
+    const { error } = await supabase.from("bookings").delete().in("id", ids);
+    if (error) { toast.error("Failed to delete"); return; }
+    setBookings((prev) => prev.filter((b) => !selectedIds.has(b.id)));
+    clearSelection();
+    toast.success(`${ids.length} booking${ids.length > 1 ? "s" : ""} deleted`);
+  };
+
+  const bulkUpdateStatus = async (status: string) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    const { error } = await supabase.from("bookings").update({ status }).in("id", ids);
+    if (error) { toast.error("Failed to update status"); return; }
+    setBookings((prev) => prev.map((b) => (selectedIds.has(b.id) ? { ...b, status } : b)));
+    clearSelection();
+    toast.success(`${ids.length} booking${ids.length > 1 ? "s" : ""} updated`);
   };
 
   const openEdit = (booking: Booking) => {
