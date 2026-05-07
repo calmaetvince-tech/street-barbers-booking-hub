@@ -323,6 +323,42 @@ const AdminDashboard = () => {
               </div>
             </div>
 
+            {/* Bulk actions toolbar */}
+            {filtered.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 p-2 sm:p-3 rounded-md border border-border bg-card/40">
+                <label className="flex items-center gap-2 text-xs font-body cursor-pointer pl-1">
+                  <Checkbox
+                    checked={selectedIds.size === filtered.length && filtered.length > 0}
+                    onCheckedChange={toggleSelectAll}
+                  />
+                  <span className="text-muted-foreground">
+                    {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Select all"}
+                  </span>
+                </label>
+                {selectedIds.size > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 ml-auto">
+                    <Select value="" onValueChange={(v) => bulkUpdateStatus(v)}>
+                      <SelectTrigger className="h-8 w-[150px] text-xs">
+                        <SelectValue placeholder="Set status…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="confirmed">Confirmed</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button variant="destructive" size="sm" className="h-8" onClick={bulkDelete}>
+                      <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-8" onClick={clearSelection}>
+                      Clear
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Mobile: stacked cards */}
             <div className="md:hidden space-y-3">
               {filtered.length === 0 && (
@@ -333,17 +369,24 @@ const AdminDashboard = () => {
                 </Card>
               )}
               {filtered.map((b) => (
-                <Card key={b.id}>
+                <Card key={b.id} className={selectedIds.has(b.id) ? "ring-1 ring-primary" : ""}>
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="font-display text-lg tracking-wide truncate">{b.customer_name}</p>
-                        <a
-                          href={`tel:${b.customer_phone}`}
-                          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          {b.customer_phone}
-                        </a>
+                      <div className="flex items-start gap-3 min-w-0">
+                        <Checkbox
+                          checked={selectedIds.has(b.id)}
+                          onCheckedChange={() => toggleSelect(b.id)}
+                          className="mt-1"
+                        />
+                        <div className="min-w-0">
+                          <p className="font-display text-lg tracking-wide truncate">{b.customer_name}</p>
+                          <a
+                            href={`tel:${b.customer_phone}`}
+                            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            {b.customer_phone}
+                          </a>
+                        </div>
                       </div>
                       <Select value={b.status} onValueChange={(v) => updateStatus(b.id, v)}>
                         <SelectTrigger className="h-7 w-auto text-xs border-0 p-0 gap-1">
@@ -404,6 +447,12 @@ const AdminDashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-10">
+                        <Checkbox
+                          checked={selectedIds.size === filtered.length && filtered.length > 0}
+                          onCheckedChange={toggleSelectAll}
+                        />
+                      </TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>Time</TableHead>
                       <TableHead>Customer</TableHead>
@@ -419,11 +468,17 @@ const AdminDashboard = () => {
                   <TableBody>
                     {filtered.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={10} className="text-center text-muted-foreground py-8">No bookings found</TableCell>
+                        <TableCell colSpan={11} className="text-center text-muted-foreground py-8">No bookings found</TableCell>
                       </TableRow>
                     )}
                     {filtered.map((b) => (
-                      <TableRow key={b.id}>
+                      <TableRow key={b.id} data-state={selectedIds.has(b.id) ? "selected" : undefined}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedIds.has(b.id)}
+                            onCheckedChange={() => toggleSelect(b.id)}
+                          />
+                        </TableCell>
                         <TableCell className="whitespace-nowrap">{b.booking_date}</TableCell>
                         <TableCell>{b.booking_time}</TableCell>
                         <TableCell className="font-medium">{b.customer_name}</TableCell>
