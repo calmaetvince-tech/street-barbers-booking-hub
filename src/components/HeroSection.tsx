@@ -49,7 +49,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen bg-[#1a1a1a]">
+    <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen" style={{ backgroundColor: "#1a1a1a" }}>
       <img
         src={evolutionImage}
         alt=""
