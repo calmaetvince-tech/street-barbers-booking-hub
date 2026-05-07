@@ -52,8 +52,6 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
     <section className="relative overflow-hidden flex flex-col lg:block pt-0 mt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen bg-black lg:bg-[#1a1a1a]">
       <h1 className="lg:hidden font-display text-base sm:text-lg font-semibold tracking-[0.15em] text-white leading-none text-center pt-20 pb-3 px-4 bg-black">
         STREET BARBERS
-        <br />
-        RHODES
       </h1>
       <div className="relative w-full aspect-[100/55.81] mt-0 lg:mt-0 lg:absolute lg:inset-0 lg:aspect-auto bg-black lg:bg-[#1a1a1a]">
         <video
@@ -73,8 +71,6 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-0 lg:mt-80">
             <h1 className="hidden lg:block font-display md:text-6xl lg:text-7xl md:font-normal md:tracking-wider text-white leading-none lg:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               STREET BARBERS
-              <br />
-              RHODES
             </h1>
 
             <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide mt-4 lg:mt-64">
