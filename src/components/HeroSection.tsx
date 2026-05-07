@@ -59,7 +59,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         playsInline
         preload="auto"
         aria-hidden
-        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-contain lg:object-cover z-0 pointer-events-none"
         style={{ backgroundColor: "#1a1a1a", objectPosition: "center center" }}
       />
       <div className="relative z-10 min-h-[calc(100vh-5rem)] flex flex-col justify-center md:block">
