@@ -49,29 +49,31 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen h-screen md:h-auto lg:min-h-0 lg:h-[55.81vw] lg:w-screen" style={{ backgroundColor: "#1a1a1a" }}>
-      <video
-        ref={videoRef}
-        src={evolutionVideo}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        aria-hidden
-        className="absolute inset-0 w-full h-full object-contain object-center lg:scale-100 z-0 pointer-events-none"
-        style={{ backgroundColor: "#1a1a1a" }}
-      />
-      <div className="relative z-10 min-h-[calc(100vh-5rem)] lg:min-h-0 flex flex-col justify-center md:block">
-        <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
-          <div className="flex flex-col gap-6 md:gap-8 px-4 mt-0 md:mt-80">
-            <h1 className="font-display text-base sm:text-lg md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.15em] md:tracking-wider text-white leading-none mt-0 md:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+    <section className="relative overflow-hidden flex flex-col lg:block pt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen" style={{ backgroundColor: "#1a1a1a" }}>
+      <div className="relative w-full aspect-[100/55.81] lg:absolute lg:inset-0 lg:aspect-auto">
+        <video
+          ref={videoRef}
+          src={evolutionVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-contain object-center lg:scale-100 z-0 pointer-events-none"
+          style={{ backgroundColor: "#1a1a1a" }}
+        />
+      </div>
+      <div className="relative z-10 lg:min-h-0 lg:block">
+        <div className="max-w-5xl mx-auto text-center pb-20 lg:pb-40">
+          <div className="flex flex-col gap-6 md:gap-8 px-4 mt-0 lg:mt-80">
+            <h1 className="font-display text-base sm:text-lg md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.15em] md:tracking-wider text-white leading-none mt-0 lg:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               STREET BARBERS
               <br />
               RHODES
             </h1>
 
-            <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide mt-4 md:mt-64">
+            <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide mt-4 lg:mt-64">
               Precision grooming. Timeless style.
             </p>
 
