@@ -65,7 +65,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <div className="relative z-10 min-h-[calc(100vh-5rem)] flex flex-col justify-center md:block">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-0 md:mt-80">
-            <h1 className="font-display text-base sm:text-lg md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.15em] md:tracking-wider text-white leading-none mt-0 md:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+            <h1 className="font-display text-base sm:text-lg md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.15em] md:tracking-wider text-white leading-none mt-0 md:-mt-64 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               STREET BARBERS
               <br />
               RHODES
