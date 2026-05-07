@@ -1,4 +1,5 @@
 import evolutionVideo from "@/assets/hero-animation.mp4";
+import evolutionImage from "@/assets/evolution.png";
 import { Phone, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
@@ -48,31 +49,14 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen bg-[#111111]">
-      <video
-        src={evolutionVideo}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
+    <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen bg-[#1a1a1a]">
+      <img
+        src={evolutionImage}
+        alt=""
         aria-hidden
-        className="absolute inset-0 w-full h-full object-cover scale-[2] blur-3xl opacity-100 brightness-125 z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-contain object-bottom z-0 pointer-events-none"
+        style={{ backgroundColor: "#1a1a1a" }}
       />
-      <video
-        ref={videoRef}
-        src={evolutionVideo}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        // @ts-ignore - iOS Safari attribute
-        webkit-playsinline="true"
-        x5-playsinline="true"
-        className="absolute top-0 md:-top-[10vh] left-1/2 -translate-x-1/2 w-full h-[65vh] md:h-[90vh] object-contain object-center z-0 pointer-events-none"
-      />
-      <div className="absolute top-0 md:-top-[10vh] left-0 right-0 h-[65vh] md:h-[90vh] bg-black/20 z-0 pointer-events-none" />
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-80">
