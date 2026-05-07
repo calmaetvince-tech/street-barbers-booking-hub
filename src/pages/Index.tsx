@@ -20,7 +20,7 @@ const Index = () => {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-card">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="font-display text-xl tracking-widest text-foreground">STREET BARBERS</span>
+          <span className="text-xl tracking-widest text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}>STREET BARBERS</span>
           <div className="hidden md:flex items-center gap-8 font-body text-xs uppercase tracking-widest text-muted-foreground">
             <a href="#services" className="hover:text-foreground transition-colors">Services</a>
             <a href="#gallery" className="hover:text-foreground transition-colors">Gallery</a>
