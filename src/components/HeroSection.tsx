@@ -49,7 +49,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
   return (
     <section className="relative overflow-hidden pt-20 md:pt-16">
-      <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[75vh] md:h-[105vh] bg-white z-0 pointer-events-none" />
+      <div className="absolute top-0 md:-top-[10vh] left-0 right-0 h-[65vh] md:h-[90vh] bg-black z-0 pointer-events-none" />
       <video
         ref={videoRef}
         src={evolutionVideo}
@@ -61,9 +61,9 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         // @ts-ignore - iOS Safari attribute
         webkit-playsinline="true"
         x5-playsinline="true"
-        className="absolute top-0 md:-top-[15vh] left-1/2 -translate-x-1/2 w-full h-[75vh] md:h-[105vh] object-cover object-center z-0 pointer-events-none"
+        className="absolute top-0 md:-top-[10vh] left-1/2 -translate-x-1/2 w-full h-[65vh] md:h-[90vh] object-contain object-center z-0 pointer-events-none"
       />
-      <div className="absolute top-0 md:-top-[15vh] left-0 right-0 h-[75vh] md:h-[105vh] bg-black/60 z-0 pointer-events-none" />
+      <div className="absolute top-0 md:-top-[10vh] left-0 right-0 h-[65vh] md:h-[90vh] bg-black/40 z-0 pointer-events-none" />
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-80">
