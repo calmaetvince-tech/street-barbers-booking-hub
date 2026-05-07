@@ -65,15 +65,15 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-80 md:mt-80">
-            <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide -mt-72 md:-mt-72">
-              Precision grooming. Timeless style.
-            </p>
-
-            <h1 className="font-display text-3xl md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-white leading-none -mt-4 md:mt-64 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+            <h1 className="font-display text-3xl md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.2em] md:tracking-wider text-white leading-none -mt-72 md:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               STREET BARBERS
               <br />
               RHODES
             </h1>
+
+            <p className="font-body text-muted-foreground text-base md:text-lg max-w-sm mx-auto tracking-wide -mt-4 md:mt-64">
+              Precision grooming. Timeless style.
+            </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-56 md:pt-2">
               <DropdownMenu>
