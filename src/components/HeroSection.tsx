@@ -59,7 +59,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         playsInline
         preload="auto"
         aria-hidden
-        className="absolute inset-0 w-full h-full object-cover scale-[2.2] blur-3xl opacity-100 brightness-150 z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover scale-[1.6] blur-2xl opacity-100 brightness-125 z-0 pointer-events-none"
       />
       <video
         ref={videoRef}
