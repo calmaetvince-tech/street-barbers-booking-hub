@@ -48,7 +48,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-20 md:pt-16 bg-[#111111]">
+    <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen bg-[#111111]">
       <div className="absolute inset-0 bg-[#111111] z-0 pointer-events-none" />
       {/* Stretched + blurred backdrop of the same animation to fill all gaps */}
       <video
@@ -59,7 +59,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         playsInline
         preload="auto"
         aria-hidden
-        className="absolute inset-0 w-full h-full object-cover scale-[1.6] blur-2xl opacity-100 brightness-125 z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover scale-[2] blur-3xl opacity-100 brightness-125 z-0 pointer-events-none"
       />
       <video
         ref={videoRef}
