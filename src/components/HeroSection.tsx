@@ -49,7 +49,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen" style={{ backgroundColor: "#1a1a1a" }}>
+    <section className="relative overflow-hidden pt-20 md:pt-16 min-h-screen" style={{ backgroundColor: "#0f0f0f" }}>
       <video
         ref={videoRef}
         src={evolutionVideo}
@@ -60,11 +60,11 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         preload="auto"
         aria-hidden
         className="absolute inset-0 w-full h-full object-contain lg:object-cover z-0 pointer-events-none"
-        style={{ backgroundColor: "#1a1a1a", objectPosition: "center center" }}
+        style={{ backgroundColor: "#0f0f0f", objectPosition: "center center" }}
       />
       <div className="relative z-10">
         <div className="max-w-5xl mx-auto text-center pb-20 md:pb-40">
-          <div className="flex flex-col gap-6 md:gap-8 px-4 mt-[28rem] md:mt-80">
+          <div className="flex flex-col gap-6 md:gap-8 px-4 mt-8 md:mt-80">
             <h1 className="font-display text-xl sm:text-2xl md:text-6xl lg:text-7xl font-semibold md:font-normal tracking-[0.15em] md:tracking-wider text-white leading-none mt-0 md:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               STREET BARBERS
               <br />
