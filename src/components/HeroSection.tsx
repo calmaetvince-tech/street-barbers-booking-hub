@@ -72,7 +72,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         // @ts-ignore - iOS Safari attribute
         webkit-playsinline="true"
         x5-playsinline="true"
-        className="absolute top-0 md:-top-[10vh] left-1/2 -translate-x-1/2 w-full h-[65vh] md:h-[90vh] object-contain object-center z-0 pointer-events-none"
+        className="absolute top-0 md:-top-[10vh] left-1/2 -translate-x-1/2 w-full h-[65vh] md:h-[90vh] object-cover object-center z-0 pointer-events-none"
       />
       <div className="absolute top-0 md:-top-[10vh] left-0 right-0 h-[65vh] md:h-[90vh] bg-black/20 z-0 pointer-events-none" />
       <div className="relative z-10">
