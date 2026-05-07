@@ -50,7 +50,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
   return (
     <section className="relative overflow-hidden flex flex-col lg:block pt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen" style={{ backgroundColor: "#1a1a1a" }}>
-      <div className="relative w-full aspect-[100/55.81] lg:absolute lg:inset-0 lg:aspect-auto">
+      <div className="relative w-full aspect-[100/55.81] mt-[60px] lg:mt-0 lg:absolute lg:inset-0 lg:aspect-auto" style={{ backgroundColor: "#1a1a1a" }}>
         <video
           ref={videoRef}
           src={evolutionVideo}
