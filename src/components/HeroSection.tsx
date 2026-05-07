@@ -137,7 +137,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               </DropdownMenu>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body -mt-10 md:mt-0 pt-0 md:pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body mt-2 md:mt-0">
               <MapPin className="w-4 h-4" />
               <span>Amerikis 40, Rhodes</span>
               <span>·</span>
