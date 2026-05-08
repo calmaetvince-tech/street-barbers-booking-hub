@@ -536,7 +536,7 @@ const AdminDashboard = () => {
 
           {/* Schedules Tab */}
           <TabsContent value="schedules">
-            <TwoWeekScheduleManager barbers={barbers} locations={locations} />
+            <CalendarScheduleManager barbers={barbers} locations={locations} />
           </TabsContent>
 
           {/* Services Tab */}
