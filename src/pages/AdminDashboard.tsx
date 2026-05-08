@@ -17,7 +17,7 @@ import RevenueCards from "@/components/admin/RevenueCards";
 import BlockedDatesManager from "@/components/admin/BlockedDatesManager";
 import ServiceManager from "@/components/admin/ServiceManager";
 import CalendarView from "@/components/admin/CalendarView";
-import TwoWeekScheduleManager from "@/components/admin/TwoWeekScheduleManager";
+import CalendarScheduleManager from "@/components/admin/CalendarScheduleManager";
 import TodayView from "@/components/admin/TodayView";
 import ChangePasswordDialog from "@/components/admin/ChangePasswordDialog";
 import {
@@ -536,7 +536,7 @@ const AdminDashboard = () => {
 
           {/* Schedules Tab */}
           <TabsContent value="schedules">
-            <TwoWeekScheduleManager barbers={barbers} locations={locations} />
+            <CalendarScheduleManager barbers={barbers} locations={locations} />
           </TabsContent>
 
           {/* Services Tab */}
