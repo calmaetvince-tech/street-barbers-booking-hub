@@ -33,13 +33,13 @@ const fmt = (d: Date) => format(d, "yyyy-MM-dd");
 const CalendarScheduleManager = ({ barbers, locations }: Props) => {
   const [selectedBarber, setSelectedBarber] = useState<string>(barbers[0]?.id || "");
   const [month, setMonth] = useState<Date>(startOfMonth(new Date()));
-  const [selectedDate, setSelectedDate] = useState<Date>(startOfToday());
+  const [selectedDates, setSelectedDates] = useState<Date[]>([startOfToday()]);
   const [weekly, setWeekly] = useState<Record<number, WeeklyHour>>({});
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // form state for selected day
+  // form state applied to ALL selected days
   const [isWorking, setIsWorking] = useState(true);
   const [startTime, setStartTime] = useState("10:00");
   const [endTime, setEndTime] = useState("20:00");
@@ -91,11 +91,13 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
     setLoading(false);
   };
 
-  // hydrate form when selection or data changes
+  // when selection changes, hydrate the form from the FIRST selected day
   useEffect(() => {
-    const key = fmt(selectedDate);
+    const first = selectedDates[0];
+    if (!first) return;
+    const key = fmt(first);
     const ov = overrides[key];
-    const dow = selectedDate.getDay();
+    const dow = first.getDay();
     const def = weekly[dow];
     const defWorking = def ? def.is_working : dow !== 0;
     const defStart = def?.start_time || "10:00";
@@ -104,11 +106,10 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
     setStartTime(ov ? ov.start_time : defStart);
     setEndTime(ov ? ov.end_time : defEnd);
     setDirty(false);
-  }, [selectedDate, overrides, weekly]);
+  }, [selectedDates, overrides, weekly]);
 
   const overrideDates = useMemo(
-    () =>
-      Object.values(overrides).map((o) => new Date(o.override_date + "T00:00:00")),
+    () => Object.values(overrides).map((o) => new Date(o.override_date + "T00:00:00")),
     [overrides]
   );
   const offDates = useMemo(
@@ -119,47 +120,49 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
     [overrides]
   );
 
-  const selectedKey = fmt(selectedDate);
-  const currentOverride = overrides[selectedKey];
-  const dow = selectedDate.getDay();
-  const def = weekly[dow];
-  const defaultLabel = def
-    ? def.is_working
-      ? `${def.start_time}–${def.end_time}`
-      : "Day off"
-    : dow === 0
-    ? "Day off"
-    : "10:00–20:00";
+  const sortedSelected = useMemo(
+    () => [...selectedDates].sort((a, b) => a.getTime() - b.getTime()),
+    [selectedDates]
+  );
+
+  const anySelectedHasOverride = sortedSelected.some((d) => overrides[fmt(d)]);
 
   const save = async () => {
+    if (!selectedBarber || sortedSelected.length === 0) return;
     if (isWorking && startTime >= endTime) {
       toast.error("Start time must be before end time");
       return;
     }
     setSaving(true);
+    const rows = sortedSelected.map((d) => ({
+      barber_id: selectedBarber,
+      override_date: fmt(d),
+      is_working: isWorking,
+      start_time: startTime,
+      end_time: endTime,
+    }));
     const { error } = await supabase
       .from("barber_schedule_overrides")
-      .upsert(
-        {
-          barber_id: selectedBarber,
-          override_date: selectedKey,
-          is_working: isWorking,
-          start_time: startTime,
-          end_time: endTime,
-        },
-        { onConflict: "barber_id,override_date" }
-      );
+      .upsert(rows, { onConflict: "barber_id,override_date" });
     setSaving(false);
     if (error) {
       toast.error("Failed to save");
       return;
     }
-    toast.success(`Saved ${format(selectedDate, "EEE d MMM")}`);
+    toast.success(
+      sortedSelected.length === 1
+        ? `Saved ${format(sortedSelected[0], "EEE d MMM")}`
+        : `Saved ${sortedSelected.length} days`
+    );
     load();
   };
 
   const reset = async () => {
-    if (!currentOverride?.id) {
+    if (!selectedBarber || sortedSelected.length === 0) return;
+    const ids = sortedSelected
+      .map((d) => overrides[fmt(d)]?.id)
+      .filter(Boolean) as string[];
+    if (ids.length === 0) {
       setDirty(false);
       return;
     }
@@ -167,15 +170,34 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
     const { error } = await supabase
       .from("barber_schedule_overrides")
       .delete()
-      .eq("id", currentOverride.id);
+      .in("id", ids);
     setSaving(false);
     if (error) {
       toast.error("Failed to reset");
       return;
     }
-    toast.success("Reverted to weekly default");
+    toast.success(
+      ids.length === 1 ? "Reverted to weekly default" : `Reverted ${ids.length} days`
+    );
     load();
   };
+
+  const selectWeekOf = (anchor: Date) => {
+    // Select Monday → Sunday around the anchor
+    const day = anchor.getDay(); // 0=Sun..6=Sat
+    const diffToMon = (day + 6) % 7;
+    const monday = new Date(anchor);
+    monday.setDate(anchor.getDate() - diffToMon);
+    const week: Date[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      week.push(d);
+    }
+    setSelectedDates(week);
+  };
+
+  const clearSelection = () => setSelectedDates([]);
 
   const getLocationName = (locId: string) =>
     locations.find((l) => l.id === locId)?.name || "";
@@ -187,8 +209,8 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
           <CalendarRange className="w-5 h-5" /> SCHEDULE CALENDAR
         </CardTitle>
         <p className="text-xs text-muted-foreground font-body mt-1">
-          Pick a barber, navigate the calendar, and click any date to edit that day. Overrides take
-          priority over the weekly pattern.
+          Pick a barber, then click any dates to select them (click again to deselect). Set the
+          hours once and apply to all selected days at once.
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -213,9 +235,9 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
         <div className="grid gap-6 md:grid-cols-[auto,1fr] items-start">
           <div className="rounded-md border p-2 bg-card">
             <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(d) => d && setSelectedDate(d)}
+              mode="multiple"
+              selected={selectedDates}
+              onSelect={(d) => setSelectedDates(d || [])}
               month={month}
               onMonthChange={setMonth}
               modifiers={{ overridden: overrideDates, off: offDates }}
@@ -237,21 +259,52 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
           </div>
 
           <div className="space-y-4">
-            <div>
+            <div className="flex flex-wrap items-center gap-2">
               <p className="font-body text-sm font-medium text-foreground">
-                {format(selectedDate, "EEEE, d MMMM yyyy")}
+                {sortedSelected.length === 0
+                  ? "No date selected"
+                  : sortedSelected.length === 1
+                  ? format(sortedSelected[0], "EEEE, d MMMM yyyy")
+                  : `${sortedSelected.length} days selected`}
               </p>
-              <p className="text-[11px] text-muted-foreground font-body">
-                Weekly default: {defaultLabel}
-                {currentOverride && (
-                  <span className="ml-1 text-primary font-medium">• overridden</span>
+              {anySelectedHasOverride && (
+                <span className="text-[11px] text-primary font-medium">• overridden</span>
+              )}
+              <div className="ml-auto flex items-center gap-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => selectWeekOf(sortedSelected[0] || startOfToday())}
+                  title="Select the whole week (Mon–Sun) of the first selected day"
+                >
+                  Select week
+                </Button>
+                {sortedSelected.length > 0 && (
+                  <Button size="sm" variant="ghost" onClick={clearSelection}>
+                    Clear
+                  </Button>
                 )}
-              </p>
+              </div>
             </div>
+
+            {sortedSelected.length > 1 && (
+              <div className="flex flex-wrap gap-1">
+                {sortedSelected.map((d) => (
+                  <span
+                    key={fmt(d)}
+                    className="text-[11px] px-2 py-0.5 rounded border border-border bg-muted/40 font-body"
+                  >
+                    {format(d, "EEE d MMM")}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <div
               className={`flex flex-wrap items-center gap-3 p-3 border rounded-md ${
-                currentOverride ? "border-primary/40 bg-primary/5" : "border-border bg-card"
+                anySelectedHasOverride
+                  ? "border-primary/40 bg-primary/5"
+                  : "border-border bg-card"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -261,6 +314,7 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
                     setIsWorking(v);
                     setDirty(true);
                   }}
+                  disabled={sortedSelected.length === 0}
                 />
                 <span className="text-xs text-muted-foreground font-body w-10">
                   {isWorking ? "Open" : "Off"}
@@ -274,7 +328,7 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
                   setStartTime(e.target.value);
                   setDirty(true);
                 }}
-                disabled={!isWorking}
+                disabled={!isWorking || sortedSelected.length === 0}
                 className="w-[120px]"
               />
               <span className="text-muted-foreground text-sm">→</span>
@@ -285,32 +339,40 @@ const CalendarScheduleManager = ({ barbers, locations }: Props) => {
                   setEndTime(e.target.value);
                   setDirty(true);
                 }}
-                disabled={!isWorking}
+                disabled={!isWorking || sortedSelected.length === 0}
                 className="w-[120px]"
               />
 
               <div className="flex items-center gap-1 ml-auto">
-                {(currentOverride || dirty) && (
+                {anySelectedHasOverride && (
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={reset}
                     disabled={saving}
-                    title="Revert to weekly default"
+                    title="Revert selected day(s) to weekly default"
                   >
                     <RotateCcw className="w-3.5 h-3.5 mr-1" /> Reset
                   </Button>
                 )}
-                <Button size="sm" onClick={save} disabled={saving || !dirty}>
+                <Button
+                  size="sm"
+                  onClick={save}
+                  disabled={saving || sortedSelected.length === 0 || !dirty}
+                >
                   <Save className="w-3.5 h-3.5 mr-1" />
-                  {saving ? "Saving..." : "Save"}
+                  {saving
+                    ? "Saving..."
+                    : sortedSelected.length > 1
+                    ? `Apply to ${sortedSelected.length} days`
+                    : "Save"}
                 </Button>
               </div>
             </div>
 
             <p className="text-xs text-muted-foreground font-body">
-              Tip: To block specific time slots within a working day (e.g. a lunch break), use the
-              "Blocked" tab.
+              Tip: Click multiple dates to apply the same hours to all of them. Use “Select week”
+              to quickly pick Mon–Sun.
             </p>
 
             {loading && (
