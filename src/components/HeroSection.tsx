@@ -1,5 +1,4 @@
 import evolutionVideo from "@/assets/hero-animation.mp4";
-import evolutionMobileVideo from "@/assets/evolution-mobile.mp4";
 import evolutionImage from "@/assets/evolution.png";
 import { Phone, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
@@ -17,41 +16,36 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const mobileVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const videos = [videoRef.current, mobileVideoRef.current].filter(Boolean) as HTMLVideoElement[];
-    if (videos.length === 0) return;
-    const cleanups: Array<() => void> = [];
-    videos.forEach((v) => {
-      v.muted = true;
-      v.defaultMuted = true;
-      v.setAttribute("muted", "");
-      v.setAttribute("playsinline", "");
-      const tryPlay = () => v.play().catch(() => {});
-      tryPlay();
-      v.addEventListener("loadedmetadata", tryPlay);
-      v.addEventListener("loadeddata", tryPlay);
-      v.addEventListener("canplay", tryPlay);
-      const onVisible = () => {
-        if (document.visibilityState === "visible") tryPlay();
-      };
-      document.addEventListener("visibilitychange", onVisible);
-      const userInteract = () => tryPlay();
-      window.addEventListener("touchstart", userInteract, { passive: true });
-      window.addEventListener("click", userInteract);
-      window.addEventListener("scroll", userInteract, { passive: true });
-      cleanups.push(() => {
-        document.removeEventListener("visibilitychange", onVisible);
-        window.removeEventListener("touchstart", userInteract);
-        window.removeEventListener("click", userInteract);
-        window.removeEventListener("scroll", userInteract);
-        v.removeEventListener("loadedmetadata", tryPlay);
-        v.removeEventListener("loadeddata", tryPlay);
-        v.removeEventListener("canplay", tryPlay);
-      });
-    });
-    return () => cleanups.forEach((c) => c());
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute("muted", "");
+    v.setAttribute("playsinline", "");
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    v.addEventListener("loadedmetadata", tryPlay);
+    v.addEventListener("loadeddata", tryPlay);
+    v.addEventListener("canplay", tryPlay);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") tryPlay();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    const userInteract = () => tryPlay();
+    window.addEventListener("touchstart", userInteract, { passive: true });
+    window.addEventListener("click", userInteract);
+    window.addEventListener("scroll", userInteract, { passive: true });
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("touchstart", userInteract);
+      window.removeEventListener("click", userInteract);
+      window.removeEventListener("scroll", userInteract);
+      v.removeEventListener("loadedmetadata", tryPlay);
+      v.removeEventListener("loadeddata", tryPlay);
+      v.removeEventListener("canplay", tryPlay);
+    };
   }, []);
 
   return (
@@ -72,18 +66,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           playsInline
           preload="auto"
           aria-hidden
-          className="hidden md:block absolute inset-0 w-full h-full object-contain object-center lg:scale-100 z-0 pointer-events-none bg-black lg:bg-[#1a1a1a]"
-        />
-        <video
-          ref={mobileVideoRef}
-          src={evolutionMobileVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          aria-hidden
-          className="md:hidden absolute inset-0 w-full h-full object-contain object-center z-0 pointer-events-none bg-black"
+          className="absolute inset-0 w-full h-full object-contain object-center lg:scale-100 z-0 pointer-events-none bg-black lg:bg-[#1a1a1a]"
         />
       </div>
       <div className="relative z-10 lg:min-h-0 lg:block mt-0 pt-0 bg-black lg:bg-transparent">
