@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Scissors, User, CalendarDays, Check, ChevronLeft, Phone, Loader2 } from "lucide-react";
+import { MapPin, Scissors, User, CalendarDays, Check, ChevronLeft, Phone, Loader2, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfToday } from "date-fns";
 import { toast } from "sonner";
@@ -362,9 +362,33 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
             {step === 2 && (
               <motion.div key="barber" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {barbers.map((b, i) => {
-                  const specialties = ["FADES", "BEARDS", "CLASSIC CUTS", "HOT TOWEL", "KIDS", "SKIN FADES", "STYLING"];
-                  const specialty = specialties[i % specialties.length];
+                {/* "Any barber" — first available */}
+                {barbers.length > 0 && (
+                  <button
+                    key="any-barber"
+                    onClick={() => { setSelectedBarber(barbers[0]); setStep(3); }}
+                    className="group text-left overflow-hidden rounded-2xl transition-all duration-[250ms] ease-out hover:-translate-y-1"
+                    style={{ background: "#111", border: "1px solid rgba(255,255,255,0.08)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+                  >
+                    <div
+                      className="relative w-full aspect-square flex items-center justify-center"
+                      style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #050505 100%)" }}
+                    >
+                      <Sparkles className="text-white/80" style={{ width: "clamp(40px, 7vw, 64px)", height: "clamp(40px, 7vw, 64px)" }} strokeWidth={1.25} />
+                    </div>
+                    <div className="py-4 px-4 text-center">
+                      <h3 className="text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "18px", lineHeight: 1.2 }}>
+                        Any barber
+                      </h3>
+                      <p className="mt-1 text-muted-foreground font-body" style={{ fontSize: "11px" }}>
+                        first available
+                      </p>
+                    </div>
+                  </button>
+                )}
+                {barbers.map((b) => {
                   const isSelected = selectedBarber?.id === b.id;
                   const initial = (b.name || "?").trim().charAt(0).toUpperCase();
                   return (
@@ -390,13 +414,10 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                           {initial}
                         </span>
                       </div>
-                      <div className="p-4">
+                      <div className="py-4 px-4 text-center">
                         <h3 className="text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "18px", lineHeight: 1.2 }}>
                           {b.name}
                         </h3>
-                        <p className="mt-1.5 text-muted-foreground" style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-                          {specialty}
-                        </p>
                       </div>
                     </button>
                   );
