@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Scissors, User, CalendarDays, Check, ChevronLeft, Phone, Loader2 } from "lucide-react";
+import { MapPin, Scissors, User, CalendarDays, Check, ChevronLeft, Phone, Loader2, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfToday } from "date-fns";
 import { toast } from "sonner";
