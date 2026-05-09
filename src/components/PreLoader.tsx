@@ -2,52 +2,6 @@ import { useEffect, useState } from "react";
 
 const SESSION_KEY = "sb_preloader_seen";
 
-const figures = [
-  // 1: ape, hunched
-  <g key="f1">
-    <circle cx="10" cy="10" r="5" />
-    <path d="M10 15 Q6 22 8 32 L12 32 Q14 22 10 15 Z" />
-    <path d="M6 20 L2 30 M14 20 L18 28" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-    <path d="M8 32 L5 44 M12 32 L15 44" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-  </g>,
-  // 2: knuckle walker
-  <g key="f2">
-    <circle cx="10" cy="9" r="5" />
-    <path d="M10 14 Q7 22 9 30 L13 30 Q15 22 10 14 Z" />
-    <path d="M7 19 L3 27 M13 19 L17 25" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-    <path d="M9 30 L6 44 M13 30 L16 44" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-  </g>,
-  // 3: hominid, more upright
-  <g key="f3">
-    <circle cx="10" cy="7" r="4.5" />
-    <path d="M10 12 Q8 22 9 30 L13 30 Q14 22 10 12 Z" />
-    <path d="M8 17 L4 24 M13 17 L17 23" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-    <path d="M9 30 L7 44 M13 30 L15 44" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-  </g>,
-  // 4: modern man walking
-  <g key="f4">
-    <circle cx="10" cy="6" r="4" />
-    <path d="M10 10 Q9 22 9 30 L13 30 Q14 22 10 10 Z" />
-    <path d="M9 16 L5 22 M13 16 L17 22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-    <path d="M9 30 L6 44 M13 30 L16 44" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-  </g>,
-  // 5: man seated in barber chair
-  <g key="f5">
-    {/* chair base */}
-    <rect x="3" y="42" width="14" height="2" />
-    <rect x="9" y="34" width="2" height="8" />
-    {/* chair back */}
-    <rect x="14" y="14" width="3" height="22" />
-    {/* seat */}
-    <rect x="5" y="32" width="12" height="3" />
-    {/* person */}
-    <circle cx="10" cy="10" r="4" />
-    <path d="M10 14 L10 30" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none" />
-    <path d="M10 20 L4 26 M10 20 L14 26" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-    <path d="M10 30 L6 38 M10 30 L14 38" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-  </g>,
-];
-
 const PreLoader = () => {
   const [show, setShow] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -61,14 +15,17 @@ const PreLoader = () => {
 
   useEffect(() => {
     if (!show) return;
-    // Mark seen BEFORE any fade so a refresh mid-fade doesn't replay the loader.
     try {
       sessionStorage.setItem(SESSION_KEY, "1");
     } catch {
       /* noop */
     }
     const fadeMs = 600;
-    const hardCap = 3000;
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hardCap = reduced ? 800 : 3000;
     let unmountTimer: number | undefined;
 
     const beginFade = () => {
@@ -80,22 +37,11 @@ const PreLoader = () => {
       }, fadeMs);
     };
 
-    // Hard cap: dismiss no matter what after 3s (account for fade duration).
     const hardCapTimer = window.setTimeout(beginFade, Math.max(0, hardCap - fadeMs));
-
-    // Listen for the last figure's entrance animation to finish.
-    const onAnimEnd = (e: Event) => {
-      const target = e.target as HTMLElement | null;
-      if (target && target.dataset && target.dataset.last === "1") {
-        beginFade();
-      }
-    };
-    document.addEventListener("animationend", onAnimEnd, true);
 
     return () => {
       window.clearTimeout(hardCapTimer);
       window.clearTimeout(unmountTimer);
-      document.removeEventListener("animationend", onAnimEnd, true);
     };
   }, [show]);
 
@@ -103,7 +49,7 @@ const PreLoader = () => {
 
   return (
     <div
-      aria-hidden
+      aria-hidden="true"
       style={{
         position: "fixed",
         inset: 0,
@@ -119,73 +65,106 @@ const PreLoader = () => {
       }}
     >
       <style>{`
-        @keyframes sb_fig_in {
-          0% { opacity: 0; transform: translateY(6px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes sb_pole_scroll {
+        @keyframes sb_pole_spin {
           0% { background-position: 0 0; }
-          100% { background-position: 28px 0; }
+          100% { background-position: 0 -80px; }
         }
-        .sb-fig { opacity: 0; animation: sb_fig_in 300ms ease-out forwards; color: #ffffff; fill: currentColor; }
-        .sb-fig:nth-child(1) { animation-delay: 0ms; }
-        .sb-fig:nth-child(2) { animation-delay: 400ms; }
-        .sb-fig:nth-child(3) { animation-delay: 800ms; }
-        .sb-fig:nth-child(4) { animation-delay: 1200ms; }
-        .sb-fig:nth-child(5) { animation-delay: 1600ms; }
+        @keyframes sb_line_pulse {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.6; }
+        }
+        .sb-pole-wrap {
+          position: relative;
+          width: clamp(64px, 8vw, 80px);
+          height: clamp(220px, 38vw, 280px);
+          display: flex;
+          flex-direction: column;
+        }
+        .sb-cap {
+          height: 12px;
+          border-radius: 6px 6px 2px 2px;
+          background: linear-gradient(180deg, #e8e8e8 0%, #888 60%, #444 100%);
+          box-shadow: inset 0 -2px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.6);
+        }
+        .sb-cap.bottom {
+          border-radius: 2px 2px 6px 6px;
+          background: linear-gradient(0deg, #e8e8e8 0%, #888 60%, #444 100%);
+        }
+        .sb-cylinder {
+          position: relative;
+          flex: 1;
+          overflow: hidden;
+          border-radius: 4px;
+          box-shadow: 0 0 40px rgba(255,255,255,0.08);
+        }
+        .sb-stripes {
+          position: absolute;
+          inset: 0;
+          background-image: repeating-linear-gradient(
+            -45deg,
+            #d62828 0 18px,
+            #ffffff 18px 36px,
+            #1e3a8a 36px 54px,
+            #ffffff 54px 72px
+          );
+          background-size: 100% 80px;
+          animation: sb_pole_spin 1.6s linear infinite;
+        }
+        .sb-shade {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.35) 100%);
+          pointer-events: none;
+        }
+        .sb-underline {
+          width: 60px;
+          height: 1px;
+          background: #ffffff;
+          margin-top: 10px;
+          animation: sb_line_pulse 1.4s ease-in-out infinite;
+        }
         @media (prefers-reduced-motion: reduce) {
-          .sb-fig { opacity: 1; animation: none; }
-          .sb-pole { animation: none !important; }
+          .sb-stripes, .sb-underline { animation: none !important; }
         }
       `}</style>
 
-      <svg
-        viewBox="0 0 120 50"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{
-          display: "block",
-          width: "min(80vw, 400px)",
-          minWidth: 200,
-          height: "auto",
-        }}
-      >
-        {figures.map((fig, i) => (
-          <g
-            key={i}
-            className="sb-fig"
-            data-last={i === figures.length - 1 ? "1" : undefined}
-            transform={`translate(${i * 22}, 2)`}
-          >
-            {fig}
-          </g>
-        ))}
-      </svg>
+      <div className="sb-pole-wrap">
+        <div className="sb-cap" />
+        <div className="sb-cylinder">
+          <div className="sb-stripes" />
+          <div className="sb-shade" />
+        </div>
+        <div className="sb-cap bottom" />
+      </div>
 
       <div
-        className="sb-pole"
         style={{
           marginTop: 32,
-          width: 200,
-          height: 4,
-          backgroundImage:
-            "repeating-linear-gradient(115deg, #e11d2a 0 8px, #ffffff 8px 16px, #1d4ed8 16px 24px, #ffffff 24px 28px)",
-          backgroundSize: "28px 100%",
-          animation: "sb_pole_scroll 700ms linear infinite",
-          borderRadius: 1,
-        }}
-      />
-
-      <div
-        style={{
-          marginTop: 16,
           color: "#ffffff",
           fontFamily: "'Cormorant Garamond', serif",
           fontWeight: 700,
           letterSpacing: "0.2em",
-          fontSize: 14,
+          fontSize: "clamp(14px, 2vw, 16px)",
         }}
       >
         STREET BARBERS
+      </div>
+      <div className="sb-underline" />
+      <div
+        aria-live="polite"
+        style={{
+          position: "absolute",
+          width: 1,
+          height: 1,
+          padding: 0,
+          margin: -1,
+          overflow: "hidden",
+          clip: "rect(0,0,0,0)",
+          whiteSpace: "nowrap",
+          border: 0,
+        }}
+      >
+        Loading Street Barbers
       </div>
     </div>
   );
