@@ -1,6 +1,6 @@
 import evolutionVideo from "@/assets/hero-animation.mp4";
 import evolutionImage from "@/assets/evolution.png";
-import { Phone, MapPin } from "lucide-react";
+import { Phone, MapPin, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import {
@@ -72,28 +72,56 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       <div className="relative z-10 lg:min-h-0 lg:block mt-0 pt-0 bg-black lg:bg-transparent">
         <div className="max-w-5xl mx-auto text-center pb-0 lg:pb-40">
           <div className="flex flex-col gap-6 md:gap-8 px-4 mt-0 lg:mt-80">
-            <h1
-              className="hidden lg:block md:text-6xl lg:text-7xl md:tracking-wider text-white leading-none lg:-mt-72 mix-blend-difference drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: "easeOut", delay: 0 }}
+              className="hidden lg:block md:tracking-wider text-white leading-none lg:-mt-72 mix-blend-difference"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontWeight: 700,
+                fontSize: "clamp(48px, 8vw, 120px)",
+                textShadow: "0 2px 12px rgba(0,0,0,0.6)",
+              }}
             >
               STREET BARBERS
-            </h1>
+            </motion.h1>
 
-            <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide mt-4 lg:mt-64 tagline-glow-all">
-              Precision grooming. Timeless style.
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
+              className="flex flex-col items-center mt-4 lg:mt-64"
+            >
+              <div className="w-10 h-px bg-foreground/40 mb-3" />
+              <p className="font-body text-muted-foreground text-sm md:text-lg max-w-sm mx-auto tracking-wide tagline-glow-all">
+                Cuts with character. Made in Rhodes.
+              </p>
+            </motion.div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2 md:pt-2">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+              className="flex flex-col items-center justify-center gap-4 pt-2 md:pt-2"
+            >
+              <motion.button
+                onClick={onBookNow}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body font-bold px-12 py-5 text-base uppercase tracking-widest shadow-lg"
+              >
+                <Calendar className="w-5 h-5" />
+                Book Now
+              </motion.button>
+
+              <div className="flex flex-row items-center justify-center gap-6">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center gap-2 bg-foreground text-background font-body font-semibold px-8 py-4 text-sm uppercase tracking-widest"
-                  >
-                    <Phone className="w-4 h-4" />
+                  <button className="inline-flex items-center gap-1.5 text-foreground/80 hover:text-foreground font-body text-xs uppercase tracking-widest underline underline-offset-4 decoration-foreground/30 hover:decoration-foreground transition-colors">
+                    <Phone className="w-3.5 h-3.5" />
                     Call Now
-                  </motion.button>
+                  </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="center" className="font-body">
                   <DropdownMenuItem asChild>
@@ -113,8 +141,8 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="inline-flex items-center gap-2 border border-foreground/30 text-foreground font-body font-semibold px-8 py-4 text-sm uppercase tracking-widest hover:bg-foreground/5 transition-colors">
-                    <MapPin className="w-4 h-4" />
+                  <button className="inline-flex items-center gap-1.5 text-foreground/80 hover:text-foreground font-body text-xs uppercase tracking-widest underline underline-offset-4 decoration-foreground/30 hover:decoration-foreground transition-colors">
+                    <MapPin className="w-3.5 h-3.5" />
                     Get Directions
                   </button>
                 </DropdownMenuTrigger>
@@ -141,7 +169,8 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </div>
+              </div>
+            </motion.div>
 
             <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body mt-2 md:mt-0 tagline-glow-all">
               <MapPin className="w-4 h-4" />
