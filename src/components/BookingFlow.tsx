@@ -361,15 +361,46 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
             )}
 
             {step === 2 && (
-              <motion.div key="barber" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-3 gap-4">
-                {barbers.map((b) => (
-                  <button key={b.id} onClick={() => { setSelectedBarber(b); setStep(3); }} className="bg-card border border-border p-8 text-center hover:border-foreground/30 transition-all">
-                    <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
-                      <User className="w-10 h-10 text-muted-foreground" />
-                    </div>
-                    <h3 className="font-display text-xl tracking-wider text-foreground">{b.name}</h3>
-                  </button>
-                ))}
+              <motion.div key="barber" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {barbers.map((b, i) => {
+                  const specialties = ["FADES", "BEARDS", "CLASSIC CUTS", "HOT TOWEL", "KIDS", "SKIN FADES", "STYLING"];
+                  const specialty = specialties[i % specialties.length];
+                  const isSelected = selectedBarber?.id === b.id;
+                  const initial = (b.name || "?").trim().charAt(0).toUpperCase();
+                  return (
+                    <button
+                      key={b.id}
+                      onClick={() => { setSelectedBarber(b); setStep(3); }}
+                      className={`group text-left overflow-hidden rounded-2xl transition-all duration-[250ms] ease-out hover:-translate-y-1 ${isSelected ? "ring-2 ring-foreground shadow-[inset_0_0_24px_rgba(255,255,255,0.08)]" : ""}`}
+                      style={{
+                        background: "#111",
+                        border: isSelected ? "2px solid hsl(var(--ring))" : "1px solid rgba(255,255,255,0.08)",
+                      }}
+                      onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
+                      onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+                    >
+                      <div
+                        className="relative w-full aspect-square flex items-center justify-center"
+                        style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #050505 100%)" }}
+                      >
+                        <span
+                          className="text-white select-none"
+                          style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(56px, 9vw, 96px)", lineHeight: 1 }}
+                        >
+                          {initial}
+                        </span>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "18px", lineHeight: 1.2 }}>
+                          {b.name}
+                        </h3>
+                        <p className="mt-1.5 text-muted-foreground" style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                          {specialty}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
               </motion.div>
             )}
 
