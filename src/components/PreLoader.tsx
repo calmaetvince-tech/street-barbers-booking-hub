@@ -65,91 +65,54 @@ const PreLoader = () => {
       }}
     >
       <style>{`
-        @keyframes sb_pole_spin {
-          0% { background-position: 0 0; }
-          100% { background-position: 0 -80px; }
+        @keyframes sb_word_in {
+          0% { opacity: 0; letter-spacing: 0.6em; transform: translateY(4px); }
+          100% { opacity: 1; letter-spacing: 0.4em; transform: translateY(0); }
         }
-        @keyframes sb_line_pulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
+        @keyframes sb_line_grow {
+          0% { transform: scaleX(0); }
+          100% { transform: scaleX(1); }
         }
-        .sb-pole-wrap {
-          position: relative;
-          width: clamp(64px, 8vw, 80px);
-          height: clamp(220px, 38vw, 280px);
-          display: flex;
-          flex-direction: column;
+        @keyframes sb_dim {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.9; }
         }
-        .sb-cap {
-          height: 12px;
-          border-radius: 6px 6px 2px 2px;
-          background: linear-gradient(180deg, #e8e8e8 0%, #888 60%, #444 100%);
-          box-shadow: inset 0 -2px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.6);
+        .sb-word {
+          color: #f5f5f5;
+          font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+          font-weight: 500;
+          font-size: clamp(28px, 4vw, 44px);
+          letter-spacing: 0.4em;
+          text-transform: uppercase;
+          animation: sb_word_in 900ms ease-out both;
+          padding-left: 0.4em;
         }
-        .sb-cap.bottom {
-          border-radius: 2px 2px 6px 6px;
-          background: linear-gradient(0deg, #e8e8e8 0%, #888 60%, #444 100%);
-        }
-        .sb-cylinder {
-          position: relative;
-          flex: 1;
-          overflow: hidden;
-          border-radius: 4px;
-          box-shadow: 0 0 40px rgba(255,255,255,0.08);
-        }
-        .sb-stripes {
-          position: absolute;
-          inset: 0;
-          background-image: repeating-linear-gradient(
-            -45deg,
-            #d62828 0 18px,
-            #ffffff 18px 36px,
-            #1e3a8a 36px 54px,
-            #ffffff 54px 72px
-          );
-          background-size: 100% 80px;
-          animation: sb_pole_spin 1.6s linear infinite;
-        }
-        .sb-shade {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(90deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.35) 100%);
-          pointer-events: none;
-        }
-        .sb-underline {
-          width: 60px;
+        .sb-line {
+          width: clamp(80px, 12vw, 140px);
           height: 1px;
-          background: #ffffff;
-          margin-top: 10px;
-          animation: sb_line_pulse 1.4s ease-in-out infinite;
+          background: #f5f5f5;
+          margin-top: 24px;
+          transform-origin: center;
+          animation: sb_line_grow 1200ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+        }
+        .sb-sub {
+          margin-top: 18px;
+          color: #f5f5f5;
+          font-family: 'Inter', system-ui, sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.35em;
+          text-transform: uppercase;
+          animation: sb_dim 1.6s ease-in-out infinite;
+          padding-left: 0.35em;
         }
         @media (prefers-reduced-motion: reduce) {
-          .sb-stripes, .sb-underline { animation: none !important; }
+          .sb-word, .sb-line, .sb-sub { animation: none !important; opacity: 1 !important; transform: none !important; }
         }
       `}</style>
 
-      <div className="sb-pole-wrap">
-        <div className="sb-cap" />
-        <div className="sb-cylinder">
-          <div className="sb-stripes" />
-          <div className="sb-shade" />
-        </div>
-        <div className="sb-cap bottom" />
-      </div>
-
-      <div
-        style={{
-          marginTop: 32,
-          color: "#ffffff",
-          fontFamily: "'Cormorant Garamond', serif",
-          fontWeight: 700,
-          letterSpacing: "0.2em",
-          fontSize: "clamp(14px, 2vw, 16px)",
-        }}
-      >
-        STREET BARBERS
-      </div>
-      <div className="sb-underline" />
+      <div className="sb-word">STREET BARBERS</div>
+      <div className="sb-line" />
+      <div className="sb-sub">Loading</div>
       <div
         aria-live="polite"
         style={{
