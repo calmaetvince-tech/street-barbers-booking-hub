@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import PreLoader from "./components/PreLoader";
 
 // Lazy load admin routes — never loaded for public users
 const AdminLogin = lazy(() => import("./pages/AdminLogin.tsx"));
@@ -27,6 +28,7 @@ const AdminFallback = () => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <PreLoader />
       <Toaster />
       <Sonner />
       <BrowserRouter>
