@@ -39,7 +39,6 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
                 transition={{ delay: i * 0.06 }}
                 className="group relative flex flex-col bg-[#111] border border-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/40"
               >
-                <Icon className="w-8 h-8 text-foreground mb-4" strokeWidth={1.5} />
                 <h3
                   className="text-foreground"
                   style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "22px" }}
