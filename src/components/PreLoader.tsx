@@ -69,7 +69,7 @@ const PreLoader = () => {
           0% { opacity: 0; letter-spacing: 0.6em; transform: translateY(4px); }
           100% { opacity: 1; letter-spacing: 0.4em; transform: translateY(0); }
         }
-        @keyframes sb_line_grow {
+        @keyframes sb_progress {
           0% { transform: scaleX(0); }
           100% { transform: scaleX(1); }
         }
@@ -87,13 +87,21 @@ const PreLoader = () => {
           animation: sb_word_in 900ms ease-out both;
           padding-left: 0.4em;
         }
-        .sb-line {
-          width: clamp(80px, 12vw, 140px);
+        .sb-progress {
+          position: relative;
+          width: clamp(160px, 22vw, 260px);
           height: 1px;
-          background: #f5f5f5;
           margin-top: 24px;
-          transform-origin: center;
-          animation: sb_line_grow 1200ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+          background: rgba(245, 245, 245, 0.15);
+          overflow: hidden;
+        }
+        .sb-progress::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: #f5f5f5;
+          transform-origin: left center;
+          animation: sb_progress 2400ms cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards;
         }
         .sb-sub {
           margin-top: 18px;
@@ -106,12 +114,13 @@ const PreLoader = () => {
           padding-left: 0.35em;
         }
         @media (prefers-reduced-motion: reduce) {
-          .sb-word, .sb-line, .sb-sub { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .sb-word, .sb-sub { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .sb-progress::after { animation: none !important; transform: scaleX(1); }
         }
       `}</style>
 
       <div className="sb-word">STREET BARBERS</div>
-      <div className="sb-line" />
+      <div className="sb-progress" />
       <div className="sb-sub">Loading</div>
       <div
         aria-live="polite"
