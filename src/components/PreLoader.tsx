@@ -26,6 +26,8 @@ const PreLoader = () => {
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const hardCap = reduced ? 800 : 3000;
+    const progressMs = reduced ? 0 : 2400;
+    const progressDelay = reduced ? 0 : 200;
     let unmountTimer: number | undefined;
 
     const beginFade = () => {
@@ -38,9 +40,12 @@ const PreLoader = () => {
     };
 
     const hardCapTimer = window.setTimeout(beginFade, Math.max(0, hardCap - fadeMs));
+    // Whichever fires first — progress completion or hard cap — wins.
+    const progressTimer = window.setTimeout(beginFade, progressMs + progressDelay);
 
     return () => {
       window.clearTimeout(hardCapTimer);
+      window.clearTimeout(progressTimer);
       window.clearTimeout(unmountTimer);
     };
   }, [show]);
@@ -70,8 +75,12 @@ const PreLoader = () => {
           100% { opacity: 1; letter-spacing: 0.4em; transform: translateY(0); }
         }
         @keyframes sb_progress {
-          0% { transform: scaleX(0); }
-          100% { transform: scaleX(1); }
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+        @keyframes sb_shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
         @keyframes sb_dim {
           0%, 100% { opacity: 0.4; }
@@ -89,39 +98,47 @@ const PreLoader = () => {
         }
         .sb-progress {
           position: relative;
-          width: clamp(160px, 22vw, 260px);
+          width: 220px;
+          max-width: 70vw;
           height: 1px;
           margin-top: 24px;
-          background: rgba(245, 245, 245, 0.15);
+          background: rgba(255, 255, 255, 0.12);
           overflow: hidden;
         }
-        .sb-progress::after {
+        .sb-progress-bar {
+          position: relative;
+          height: 100%;
+          width: 0%;
+          background: #f5f5f5;
+          overflow: hidden;
+          animation: sb_progress 2400ms ease-in-out 200ms forwards;
+        }
+        .sb-progress-bar::after {
           content: "";
           position: absolute;
           inset: 0;
-          background: #f5f5f5;
-          transform-origin: left center;
-          animation: sb_progress 2400ms cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards;
+          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 50%, transparent 100%);
+          animation: sb_shimmer 1.4s linear infinite;
         }
         .sb-sub {
-          margin-top: 18px;
-          color: #f5f5f5;
+          margin-top: 16px;
+          color: rgba(255, 255, 255, 0.4);
           font-family: 'Inter', system-ui, sans-serif;
           font-size: 11px;
           letter-spacing: 0.35em;
           text-transform: uppercase;
-          animation: sb_dim 1.6s ease-in-out infinite;
           padding-left: 0.35em;
         }
         @media (prefers-reduced-motion: reduce) {
           .sb-word, .sb-sub { animation: none !important; opacity: 1 !important; transform: none !important; }
-          .sb-progress::after { animation: none !important; transform: scaleX(1); }
+          .sb-progress-bar { animation: none !important; width: 100%; }
+          .sb-progress-bar::after { animation: none !important; opacity: 0; }
         }
       `}</style>
 
       <div className="sb-word">STREET BARBERS</div>
-      <div className="sb-progress" />
-      <div className="sb-sub">Loading</div>
+      <div className="sb-progress"><div className="sb-progress-bar" /></div>
+      <div className="sb-sub">RHODES • EST. 2024</div>
       <div
         aria-live="polite"
         style={{
