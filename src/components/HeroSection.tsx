@@ -51,7 +51,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative overflow-hidden flex flex-col lg:block pt-0 mt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen bg-[#0a0a0a] lg:bg-[#1a1a1a]">
       <h1
-        className="lg:hidden text-base sm:text-lg tracking-[0.15em] text-white leading-none text-center pt-20 pb-3 px-4 bg-black"
+        className="lg:hidden text-base sm:text-lg tracking-[0.15em] text-white leading-none text-center pt-32 pb-3 px-4 bg-black"
         style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}
       >
         STREET BARBERS
