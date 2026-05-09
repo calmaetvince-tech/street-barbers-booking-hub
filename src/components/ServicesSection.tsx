@@ -9,9 +9,6 @@ const services = [
   { name: "Haircut", duration: "30 MIN", price: "€18", description: "Classic or modern. Wash, cut, finish.", Icon: Scissors },
   { name: "Beard Trim", duration: "20 MIN", price: "€12", description: "Shape, line up, hot towel. Sharp and clean.", Icon: Wind },
   { name: "Haircut + Beard", duration: "50 MIN", price: "€25", description: "The full reset. Save €5 vs booking separately.", Icon: Sparkles },
-  { name: "Skin Fade", duration: "40 MIN", price: "€22", description: "Tight blends, crisp edges. Our specialty.", Icon: Layers },
-  { name: "Kid's Cut (under 12)", duration: "25 MIN", price: "€12", description: "Patient, fast, no fuss.", Icon: Baby },
-  { name: "Hot Towel Shave", duration: "35 MIN", price: "€20", description: "Old-school cutthroat shave with hot towel ritual.", Icon: Droplets },
 ];
 
 const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
