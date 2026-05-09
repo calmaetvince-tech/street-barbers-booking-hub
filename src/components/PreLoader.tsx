@@ -61,21 +61,41 @@ const PreLoader = () => {
 
   useEffect(() => {
     if (!show) return;
+    // Mark seen BEFORE any fade so a refresh mid-fade doesn't replay the loader.
     try {
       sessionStorage.setItem(SESSION_KEY, "1");
     } catch {
       /* noop */
     }
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const sitMs = reduced ? 800 : 2000;
     const fadeMs = 600;
     const hardCap = 3000;
+    let unmountTimer: number | undefined;
 
-    const startFade = setTimeout(() => setFading(true), Math.min(sitMs, hardCap - fadeMs));
-    const unmount = setTimeout(() => setShow(false), hardCap);
+    const beginFade = () => {
+      setFading(true);
+      window.clearTimeout(unmountTimer);
+      unmountTimer = window.setTimeout(() => {
+        console.log("[PreLoader] dismissed");
+        setShow(false);
+      }, fadeMs);
+    };
+
+    // Hard cap: dismiss no matter what after 3s (account for fade duration).
+    const hardCapTimer = window.setTimeout(beginFade, Math.max(0, hardCap - fadeMs));
+
+    // Listen for the last figure's entrance animation to finish.
+    const onAnimEnd = (e: Event) => {
+      const target = e.target as HTMLElement | null;
+      if (target && target.dataset && target.dataset.last === "1") {
+        beginFade();
+      }
+    };
+    document.addEventListener("animationend", onAnimEnd, true);
+
     return () => {
-      clearTimeout(startFade);
-      clearTimeout(unmount);
+      window.clearTimeout(hardCapTimer);
+      window.clearTimeout(unmountTimer);
+      document.removeEventListener("animationend", onAnimEnd, true);
     };
   }, [show]);
 
@@ -120,14 +140,22 @@ const PreLoader = () => {
       `}</style>
 
       <svg
-        width="320"
-        height="60"
         viewBox="0 0 120 50"
         xmlns="http://www.w3.org/2000/svg"
-        style={{ display: "block" }}
+        style={{
+          display: "block",
+          width: "min(80vw, 400px)",
+          minWidth: 200,
+          height: "auto",
+        }}
       >
         {figures.map((fig, i) => (
-          <g key={i} className="sb-fig" transform={`translate(${i * 22}, 2)`}>
+          <g
+            key={i}
+            className="sb-fig"
+            data-last={i === figures.length - 1 ? "1" : undefined}
+            transform={`translate(${i * 22}, 2)`}
+          >
             {fig}
           </g>
         ))}
