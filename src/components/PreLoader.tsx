@@ -138,7 +138,7 @@ const PreLoader = () => {
 
       <div className="sb-word">STREET BARBERS</div>
       <div className="sb-progress"><div className="sb-progress-bar" /></div>
-      <div className="sb-sub">RHODES • EST. 2024</div>
+      <div className="sb-sub">RHODES</div>
       <div
         aria-live="polite"
         style={{

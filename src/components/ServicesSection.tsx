@@ -29,7 +29,6 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {services.map((service, i) => {
-            const { Icon } = service;
             return (
               <motion.div
                 key={service.name}
@@ -39,7 +38,6 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
                 transition={{ delay: i * 0.06 }}
                 className="group relative flex flex-col bg-[#111] border border-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/40"
               >
-                <Icon className="w-8 h-8 text-foreground mb-4" strokeWidth={1.5} />
                 <h3
                   className="text-foreground"
                   style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "22px" }}

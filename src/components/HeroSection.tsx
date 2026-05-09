@@ -173,12 +173,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             </motion.div>
 
             <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body mt-2 md:mt-0 tagline-glow-all">
-              <MapPin className="w-4 h-4" />
-              <span>Amerikis 40, Rhodes</span>
-              <span>·</span>
-              <span>Irakleidon Avenue, Ialyssos</span>
-              <span className="hidden md:inline mx-2">·</span>
-              <span className="w-full md:w-auto">Mon–Sat 10:00–21:00</span>
+              <span>Mon–Sat 10:00–21:00</span>
             </div>
           </div>
         </div>
