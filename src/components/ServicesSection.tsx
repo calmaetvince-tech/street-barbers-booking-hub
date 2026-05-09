@@ -29,7 +29,6 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {services.map((service, i) => {
-            const { Icon } = service;
             return (
               <motion.div
                 key={service.name}
