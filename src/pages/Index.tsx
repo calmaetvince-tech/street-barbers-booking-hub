@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
@@ -8,6 +8,8 @@ import ContactSection from "@/components/ContactSection";
 import { Calendar } from "lucide-react";
 import heroCenterImage from "@/assets/hero-team-refined.jpg";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+
+const BarberPole3D = lazy(() => import("@/components/BarberPole3D"));
 
 const Index = () => {
   const bookingRef = useRef<HTMLDivElement>(null);
@@ -21,7 +23,14 @@ const Index = () => {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-card">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="text-xl tracking-widest text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}>STREET BARBERS</span>
+          <div className="flex items-center">
+            <Suspense fallback={<div style={{ width: 32, height: 56, marginRight: 12 }} />}>
+              <div style={{ marginRight: 12 }}>
+                <BarberPole3D />
+              </div>
+            </Suspense>
+            <span className="text-xl tracking-widest text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}>STREET BARBERS</span>
+          </div>
           <div className="hidden md:flex items-center gap-8 font-body text-xs uppercase tracking-widest text-muted-foreground">
             <a href="#services" className="hover:text-foreground transition-colors">Services</a>
             <a href="#gallery" className="hover:text-foreground transition-colors">Gallery</a>
