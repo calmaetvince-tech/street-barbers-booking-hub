@@ -41,15 +41,34 @@ const Index = () => {
       <HeroSection onBookNow={scrollToBooking} />
       <ServicesSection onBookService={scrollToBooking} />
       <BookingFlow ref={bookingRef} />
-      <ContainerScroll titleComponent={null}>
-        <img
-          src={heroCenterImage}
-          alt="Street Barbers team"
-          className="w-full h-full object-cover rounded-2xl"
-          width={1920}
-          height={1080}
-        />
-      </ContainerScroll>
+
+      <section className="py-24 md:py-32 bg-background" id="team">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16 md:mb-20"
+        >
+          <p className="font-body text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-4">
+            The People
+          </p>
+          <h2 className="font-display text-5xl md:text-6xl tracking-wider text-foreground">
+            OUR TEAM
+          </h2>
+          <div className="w-12 h-px bg-foreground/30 mx-auto mt-8" />
+        </motion.div>
+
+        <ContainerScroll titleComponent={null}>
+          <img
+            src={heroCenterImage}
+            alt="Street Barbers team"
+            className="w-full h-full object-cover rounded-2xl"
+            width={1920}
+            height={1080}
+          />
+        </ContainerScroll>
+      </section>
       <ContactSection />
       <GallerySection />
       
