@@ -17,13 +17,15 @@ function makeStripeTexture() {
   ctx.fillStyle = WHITE;
   ctx.fillRect(0, 0, size, size);
 
-  // Diagonal stripes ~35deg, pattern: Red, White, Blue, White, Red, White
+  // Diagonal stripes ~35deg, pattern: Red, White, Blue, White (seamless 4-cycle).
+  // stripeH chosen so an integer number of full patterns fits the texture height,
+  // guaranteeing a perfect wrap when offset.y scrolls.
   ctx.save();
   ctx.translate(size / 2, size / 2);
   ctx.rotate((35 * Math.PI) / 180);
   ctx.translate(-size, -size);
-  const colors = [RED, WHITE, BLUE, WHITE, RED, WHITE];
-  const stripeH = size / 12;
+  const colors = [RED, WHITE, BLUE, WHITE];
+  const stripeH = size / 8; // 8 stripes = exactly 2 full patterns across the texture
   for (let y = -size; y < size * 3; y += stripeH) {
     ctx.fillStyle = colors[Math.floor((y + size) / stripeH) % colors.length];
     ctx.fillRect(0, y, size * 2, stripeH);
@@ -82,7 +84,8 @@ function Pole({ animate }: { animate: boolean }) {
     if (!animate) return;
     const d = Math.min(delta, 0.05);
     if (groupRef.current) groupRef.current.rotation.y += ROT_SPEED * d;
-    texture.offset.y -= d * 0.18;
+    // Scroll one full 4-stripe pattern (= 0.5 of the texture, since 8 stripes fit) every ~3s.
+    texture.offset.y -= d * (0.5 / 3);
   });
 
   return (
