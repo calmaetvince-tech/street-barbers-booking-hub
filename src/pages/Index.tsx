@@ -38,7 +38,7 @@ const Index = () => {
       </nav>
 
       <HeroSection onBookNow={scrollToBooking} />
-      <ServicesSection />
+      <ServicesSection onBookService={scrollToBooking} />
       <BookingFlow ref={bookingRef} />
       <ContainerScroll titleComponent={null}>
         <img
