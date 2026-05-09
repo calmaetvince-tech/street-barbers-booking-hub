@@ -1,6 +1,6 @@
 import evolutionVideo from "@/assets/hero-animation.mp4";
 import evolutionImage from "@/assets/evolution.png";
-import { Phone, MapPin } from "lucide-react";
+import { Phone, MapPin, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import {
