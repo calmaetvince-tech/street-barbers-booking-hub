@@ -83,9 +83,10 @@ function Pole({ animate }: { animate: boolean }) {
   useFrame((_, delta) => {
     if (!animate) return;
     const d = Math.min(delta, 0.05);
+    // Single source of motion: continuous one-way Y rotation of the cylinder.
+    // The baked diagonal stripes naturally read as an upward helix — no texture
+    // offset animation, so nothing can fight it or appear to oscillate.
     if (groupRef.current) groupRef.current.rotation.y += ROT_SPEED * d;
-    // Scroll one full 4-stripe pattern (= 0.5 of the texture, since 8 stripes fit) every ~3s.
-    texture.offset.y -= d * (0.5 / 3);
   });
 
   return (
