@@ -320,20 +320,24 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     setAssignedBarber(barberForBooking);
 
     setSubmitting(true);
-    const { error } = await supabase.from("bookings").insert({
-      location_id: selectedLocation.id,
-      service_id: selectedService.id,
-      barber_id: barberForBooking!.id,
-      booking_date: selectedDate,
-      booking_time: selectedTime,
-      customer_name: name,
-      customer_phone: phone,
+    const { data: fnData, error: fnError } = await supabase.functions.invoke("book-appointment", {
+      body: {
+        location_id: selectedLocation.id,
+        service_id: selectedService.id,
+        barber_id: barberForBooking!.id,
+        booking_date: selectedDate,
+        booking_time: selectedTime,
+        customer_name: name,
+        customer_phone: phone,
+        customer_email: email || null,
+      },
     });
     setSubmitting(false);
-    if (error) {
-      console.error("Booking error:", error);
-      if (error.code === "23505") toast.error("This time slot was just booked. Please choose another.");
-      else if (error.message) toast.error(error.message);
+    if (fnError || fnData?.error) {
+      const msg = fnData?.error || fnError?.message || "";
+      console.error("Booking error:", msg);
+      if (fnData?.code === "23505" || msg.includes("23505")) toast.error("This time slot was just booked. Please choose another.");
+      else if (msg) toast.error(msg);
       else toast.error("Booking failed. Please try again.");
       return;
     }
