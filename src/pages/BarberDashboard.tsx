@@ -51,9 +51,11 @@ const statusColors: Record<string, string> = {
 const TodayTab = ({
   bookings,
   services,
+  onStatusChange,
 }: {
   bookings: Booking[];
   services: Service[];
+  onStatusChange: (id: string, status: string) => void;
 }) => {
   const [filter, setFilter] = useState<"today" | "tomorrow" | "all">("today");
   const today = format(new Date(), "yyyy-MM-dd");
@@ -124,7 +126,17 @@ const TodayTab = ({
                       </span>
                     )}
                   </div>
-                  <Badge className={`${statusColors[b.status] || ""} text-xs`}>{b.status}</Badge>
+                  <Select value={b.status} onValueChange={(v) => onStatusChange(b.id, v)}>
+                    <SelectTrigger className="h-7 w-auto text-xs border-0 p-0 gap-1">
+                      <Badge className={`${statusColors[b.status] || ""} text-xs`}>{b.status}</Badge>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="confirmed">Confirmed</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1 text-sm">
                   <div className="flex items-center gap-2">
@@ -521,7 +533,7 @@ const BarberDashboard = () => {
           </div>
 
           <TabsContent value="today">
-            <TodayTab bookings={bookings} services={services} />
+            <TodayTab bookings={bookings} services={services} onStatusChange={updateStatus} />
           </TabsContent>
 
           <TabsContent value="bookings">

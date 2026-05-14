@@ -36,7 +36,7 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group relative flex flex-col bg-[#111] border border-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/40"
+                className="group relative flex flex-col bg-[#111] border border-border p-6 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/40"
               >
                 <h3
                   className="text-foreground"
@@ -44,7 +44,7 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
                 >
                   {service.name}
                 </h3>
-                <span className="mt-2 inline-block self-start px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-[11px] uppercase tracking-[0.15em]">
+                <span className="mt-2 inline-block self-start px-2 py-0.5 bg-secondary text-muted-foreground text-[11px] uppercase tracking-[0.15em]">
                   {service.duration}
                 </span>
                 <p className="mt-3 font-body text-sm text-muted-foreground leading-relaxed">

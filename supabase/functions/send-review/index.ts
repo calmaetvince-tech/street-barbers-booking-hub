@@ -9,7 +9,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'onboarding@resend.dev'
 const CRON_SECRET = Deno.env.get('CRON_SECRET')
-const GOOGLE_REVIEW_URL = Deno.env.get('GOOGLE_REVIEW_URL') ?? 'https://g.page/r/streetbarbers/review'
+const GOOGLE_REVIEW_URL_FALLBACK = Deno.env.get('GOOGLE_REVIEW_URL') ?? 'https://www.google.com/maps/search/Street+Barbers+Rhodes'
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
       await sendEmail(
         booking.customer_email,
         `How was your visit at Street Barbers?`,
-        reviewEmailHtml(emailData, GOOGLE_REVIEW_URL),
+        reviewEmailHtml(emailData, booking.location_review_url || GOOGLE_REVIEW_URL_FALLBACK),
       )
 
       await supabase.from('email_logs').insert({
