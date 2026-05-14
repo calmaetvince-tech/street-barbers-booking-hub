@@ -325,29 +325,51 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
     setSubmitting(true);
 
-    // Insert booking without customer_email — PostgREST schema cache doesn't know that column.
-    const { error } = await supabase.from("bookings").insert({
-      location_id:   selectedLocation.id,
-      service_id:    selectedService.id,
-      barber_id:     barberForBooking!.id,
-      booking_date:  selectedDate,
-      booking_time:  selectedTime,
-      customer_name: name,
-      customer_phone: phone,
+    // Use create_booking RPC — stores customer_email in DB so reminder emails work.
+    // Falls back to direct insert if the RPC isn't in PostgREST's schema cache yet.
+    let bookingId: string | undefined;
+    const { data: rpcId, error: rpcError } = await supabase.rpc("create_booking", {
+      p_location_id:    selectedLocation.id,
+      p_service_id:     selectedService.id,
+      p_barber_id:      barberForBooking!.id,
+      p_booking_date:   selectedDate,
+      p_booking_time:   selectedTime,
+      p_customer_name:  name,
+      p_customer_phone: phone,
+      p_customer_email: email,
     });
 
+    let finalError = rpcError;
+    if (!rpcError) {
+      bookingId = rpcId ?? undefined;
+    } else if (rpcError.code !== "23505") {
+      // RPC unavailable (schema cache stale) — fall back to direct insert
+      const { data: inserted, error: insertError } = await supabase.from("bookings").insert({
+        location_id:    selectedLocation.id,
+        service_id:     selectedService.id,
+        barber_id:      barberForBooking!.id,
+        booking_date:   selectedDate,
+        booking_time:   selectedTime,
+        customer_name:  name,
+        customer_phone: phone,
+      }).select("id").single();
+      finalError = insertError;
+      bookingId = inserted?.id;
+    }
+
     setSubmitting(false);
-    if (error) {
-      console.error("Booking error:", error);
-      if (error.code === "23505") toast.error("This time slot was just booked. Please choose another.");
-      else toast.error(error.message || "Booking failed. Please try again.");
+    if (finalError) {
+      console.error("Booking error:", finalError);
+      if (finalError.code === "23505") toast.error("This time slot was just booked. Please choose another.");
+      else toast.error(finalError.message || "Booking failed. Please try again.");
       return;
     }
 
-    // Send confirmation email directly — bypasses PostgREST schema cache entirely.
+    // Send confirmation email — fire and forget, never blocks the booking.
     supabase.functions.invoke("send-confirmation", {
       body: {
         type:             "DIRECT",
+        booking_id:       bookingId,
         customer_name:    name,
         customer_email:   email,
         barber_name:      barberForBooking!.name,
@@ -359,7 +381,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
         booking_date:     selectedDate,
         booking_time:     selectedTime,
       },
-    }).catch(() => { /* email failure never blocks the booking */ });
+    }).catch(() => {});
 
     toast.success("Appointment booked successfully!");
     setStep(5);
