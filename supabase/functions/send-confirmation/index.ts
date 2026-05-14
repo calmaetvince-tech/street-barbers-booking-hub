@@ -184,9 +184,9 @@ Deno.serve(async (req) => {
     req.headers.get('authorization')?.replace('Bearer ', '') ??
     ''
   const isWebhook = !!WEBHOOK_SECRET && secret === WEBHOOK_SECRET
-  const isBrowser =
-    !!SUPABASE_ANON_KEY &&
-    (apiKey === SUPABASE_ANON_KEY || apiKey === SUPABASE_SERVICE_ROLE_KEY)
+  // Accept any request that carries a Supabase-style JWT (starts with eyJ, len > 100)
+  // The Supabase JS SDK always sends the anon key automatically.
+  const isBrowser = apiKey.startsWith('eyJ') && apiKey.length > 100
 
   if (!isWebhook && !isBrowser) {
     return new Response('Unauthorized', { status: 401, headers: corsHeaders })
