@@ -23,28 +23,36 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
           <h2 className="font-display text-5xl md:text-6xl tracking-wider text-foreground">SERVICES</h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px border border-border bg-border max-w-3xl mx-auto">
+        <div className="max-w-2xl mx-auto border border-border divide-y divide-border">
           {services.map((service, i) => (
             <motion.button
               key={service.name}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
               onClick={() => onBookService?.(service.name)}
-              className="group flex flex-col justify-between bg-[#111] p-5 sm:p-6 text-left transition-colors duration-200 hover:bg-[#161616]"
+              className="group w-full flex items-stretch text-left hover:bg-white/[0.03] transition-colors duration-200"
             >
-              <span
-                className="text-foreground leading-tight"
-                style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "20px" }}
-              >
-                {service.name}
-              </span>
-              <div className="mt-6 flex items-end justify-between">
-                <span className="font-body text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+              {/* Left: name + duration */}
+              <div className="flex-1 px-6 py-5 flex flex-col justify-center gap-2">
+                <span
+                  className="text-foreground leading-none"
+                  style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "22px" }}
+                >
+                  {service.name}
+                </span>
+                <span className="font-body text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                   {service.duration}
                 </span>
-                <span className="font-body font-bold text-foreground text-2xl">
+              </div>
+
+              {/* Vertical divider */}
+              <div className="w-px bg-border" />
+
+              {/* Right: price */}
+              <div className="w-24 sm:w-28 flex items-center justify-center px-4">
+                <span className="font-body font-bold text-foreground text-2xl sm:text-3xl">
                   {service.price}
                 </span>
               </div>
