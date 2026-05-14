@@ -404,13 +404,13 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
         </motion.div>
 
         {step < 5 && (
-          <div className="flex items-center justify-center gap-2 mb-12 max-w-lg mx-auto">
+          <div className="flex items-center justify-center gap-1 sm:gap-2 mb-12 max-w-lg mx-auto">
             {STEPS.map((s, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-body transition-colors ${i <= step ? "bg-foreground text-background" : "bg-secondary text-muted-foreground"}`}>
-                  <s.icon className="w-4 h-4" />
+              <div key={i} className="flex items-center gap-1 sm:gap-2">
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-body transition-colors ${i <= step ? "bg-foreground text-background" : "bg-secondary text-muted-foreground"}`}>
+                  <s.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </div>
-                {i < STEPS.length - 1 && <div className={`w-6 h-px transition-colors ${i < step ? "bg-foreground" : "bg-border"}`} />}
+                {i < STEPS.length - 1 && <div className={`w-4 sm:w-6 h-px transition-colors ${i < step ? "bg-foreground" : "bg-border"}`} />}
               </div>
             ))}
           </div>
@@ -601,14 +601,14 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
             {step === 4 && (
               <motion.div key="confirm" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
-                <div className="bg-card border border-border p-6 space-y-3">
+                <div className="bg-card border border-border p-5 sm:p-6 space-y-3">
                   <p className="text-sm text-muted-foreground font-body">Booking Summary</p>
                   <div className="space-y-2 text-sm font-body">
-                    <div className="flex justify-between"><span className="text-muted-foreground">Location</span><span className="text-foreground">{selectedLocation?.name}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Service</span><span className="text-foreground">{selectedService?.name} — €{selectedService?.price}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Barber</span><span className="text-foreground">{isAnyBarber ? "First available" : selectedBarber?.name}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="text-foreground">{selectedDate && format(new Date(selectedDate + "T00:00:00"), "EEEE, d MMMM yyyy")}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Time</span><span className="text-foreground font-semibold">{selectedTime}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-muted-foreground shrink-0">Location</span><span className="text-foreground text-right">{selectedLocation?.name}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-muted-foreground shrink-0">Service</span><span className="text-foreground text-right">{selectedService?.name} — €{selectedService?.price}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-muted-foreground shrink-0">Barber</span><span className="text-foreground text-right">{isAnyBarber ? "First available" : selectedBarber?.name}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-muted-foreground shrink-0">Date</span><span className="text-foreground text-right">{selectedDate && format(new Date(selectedDate + "T00:00:00"), "EEEE, d MMMM yyyy")}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-muted-foreground shrink-0">Time</span><span className="text-foreground font-semibold">{selectedTime}</span></div>
                   </div>
                 </div>
 
@@ -655,7 +655,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                 <div className="w-16 h-16 bg-foreground rounded-full flex items-center justify-center mx-auto mb-6">
                   <Check className="w-8 h-8 text-background" />
                 </div>
-                <h3 className="font-display text-4xl tracking-wider text-foreground mb-3">YOU'RE ALL SET</h3>
+                <h3 className="font-display text-2xl sm:text-4xl tracking-wider text-foreground mb-3">YOU'RE ALL SET</h3>
                 <p className="text-muted-foreground font-body mb-8">
                   Your appointment with <span className="text-foreground">{(assignedBarber ?? selectedBarber)?.name}</span> at <span className="text-foreground">{selectedLocation?.name}</span> is confirmed for{" "}
                   <span className="text-foreground">{selectedDate && format(new Date(selectedDate + "T00:00:00"), "d MMMM")} at {selectedTime}</span>.

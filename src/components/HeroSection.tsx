@@ -51,8 +51,8 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative overflow-hidden flex flex-col lg:block pt-0 mt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen bg-[#0a0a0a] lg:bg-[#1a1a1a]">
       <h1
-        className="lg:hidden text-base sm:text-lg tracking-[0.15em] text-white leading-none text-center pt-32 pb-3 px-4 bg-black"
-        style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900 }}
+        className="lg:hidden text-sm sm:text-base tracking-[0.25em] text-white leading-none text-center pt-24 pb-3 px-4 bg-black"
+        style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}
       >
         STREET BARBERS
       </h1>
@@ -109,7 +109,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
                 onClick={onBookNow}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body font-bold px-12 py-5 text-base uppercase tracking-widest shadow-lg"
+                className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body font-bold px-8 sm:px-12 py-4 sm:py-5 text-sm sm:text-base uppercase tracking-widest shadow-lg"
               >
                 <Calendar className="w-5 h-5" />
                 Book Now

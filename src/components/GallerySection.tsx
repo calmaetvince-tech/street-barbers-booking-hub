@@ -85,7 +85,7 @@ const LocationGalleryBlock = ({
         <p className="font-body text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-2">
           {label}
         </p>
-        <h3 className="font-display text-2xl md:text-3xl tracking-wider text-foreground">
+        <h3 className="font-display text-xl md:text-3xl tracking-wider text-foreground leading-tight">
           {title}
         </h3>
       </div>
@@ -144,7 +144,7 @@ const GallerySection = () => {
           <p className="font-body text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-4">
             The Craft
           </p>
-          <h2 className="font-display text-6xl md:text-8xl tracking-wider text-foreground">
+          <h2 className="font-display text-5xl sm:text-6xl md:text-8xl tracking-wider text-foreground">
             GALLERY
           </h2>
           <div className="w-12 h-px bg-foreground/30 mx-auto mt-8" />

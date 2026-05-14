@@ -23,7 +23,7 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
           <h2 className="font-display text-5xl md:text-6xl tracking-wider text-foreground">SERVICES</h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px border border-border max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px border border-border bg-border max-w-3xl mx-auto">
           {services.map((service, i) => (
             <motion.button
               key={service.name}
@@ -32,7 +32,7 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
               onClick={() => onBookService?.(service.name)}
-              className="group flex flex-col justify-between bg-[#111] p-6 text-left transition-colors duration-200 hover:bg-[#161616]"
+              className="group flex flex-col justify-between bg-[#111] p-5 sm:p-6 text-left transition-colors duration-200 hover:bg-[#161616]"
             >
               <span
                 className="text-foreground leading-tight"

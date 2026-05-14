@@ -37,7 +37,7 @@ const ContactSection = () => {
           className="text-center mb-16"
         >
           <h2 className="font-display text-5xl md:text-6xl tracking-wider text-foreground">VISIT US</h2>
-          <p className="font-body text-muted-foreground text-lg mt-4 max-w-md mx-auto">
+          <p className="font-body text-muted-foreground text-sm sm:text-lg mt-4 max-w-md mx-auto">
             Walk in or call us to book your next cut.
           </p>
         </motion.div>

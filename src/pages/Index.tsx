@@ -22,14 +22,14 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-card">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center">
-            <Suspense fallback={<div style={{ width: 32, height: 56, marginRight: 12 }} />}>
-              <div style={{ marginRight: 12 }}>
+            <Suspense fallback={<div style={{ width: 32, height: 56, marginRight: 10 }} />}>
+              <div style={{ marginRight: 10 }}>
                 <BarberPole3D />
               </div>
             </Suspense>
-            <span className="text-xl tracking-widest text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}>STREET BARBERS</span>
+            <span className="text-[13px] sm:text-xl tracking-[0.1em] sm:tracking-widest text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}>STREET BARBERS</span>
           </div>
           <div className="hidden md:flex items-center gap-8 font-body text-xs uppercase tracking-widest text-muted-foreground">
             <a href="#services" className="hover:text-foreground transition-colors">Services</a>
@@ -39,10 +39,10 @@ const Index = () => {
           </div>
           <button
             onClick={scrollToBooking}
-            className="inline-flex items-center gap-2 bg-foreground text-background font-body font-semibold px-5 py-2 text-xs uppercase tracking-widest"
+            className="inline-flex items-center gap-2 bg-foreground text-background font-body font-semibold px-3 sm:px-5 py-2 text-xs uppercase tracking-widest"
           >
             <Calendar className="w-3 h-3" />
-            Book Now
+            <span className="hidden sm:inline">Book Now</span>
           </button>
         </div>
       </nav>
