@@ -320,15 +320,14 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     setAssignedBarber(barberForBooking);
 
     setSubmitting(true);
-    const { error } = await supabase.rpc("create_booking", {
-      p_location_id: selectedLocation.id,
-      p_service_id: selectedService.id,
-      p_barber_id: barberForBooking!.id,
-      p_booking_date: selectedDate,
-      p_booking_time: selectedTime,
-      p_customer_name: name,
-      p_customer_phone: phone,
-      p_customer_email: email || null,
+    const { error } = await supabase.from("bookings").insert({
+      location_id: selectedLocation.id,
+      service_id: selectedService.id,
+      barber_id: barberForBooking!.id,
+      booking_date: selectedDate,
+      booking_time: selectedTime,
+      customer_name: name,
+      customer_phone: phone,
     });
     setSubmitting(false);
     if (error) {
