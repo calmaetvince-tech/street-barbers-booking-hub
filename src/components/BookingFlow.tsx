@@ -325,15 +325,15 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
     setSubmitting(true);
 
-    const { error } = await supabase.rpc("create_booking", {
-      p_location_id:    selectedLocation.id,
-      p_service_id:     selectedService.id,
-      p_barber_id:      barberForBooking!.id,
-      p_booking_date:   selectedDate,
-      p_booking_time:   selectedTime,
-      p_customer_name:  name,
-      p_customer_phone: phone,
-      p_customer_email: email,
+    // Insert booking without customer_email — PostgREST schema cache doesn't know that column.
+    const { error } = await supabase.from("bookings").insert({
+      location_id:   selectedLocation.id,
+      service_id:    selectedService.id,
+      barber_id:     barberForBooking!.id,
+      booking_date:  selectedDate,
+      booking_time:  selectedTime,
+      customer_name: name,
+      customer_phone: phone,
     });
 
     setSubmitting(false);
@@ -343,6 +343,24 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       else toast.error(error.message || "Booking failed. Please try again.");
       return;
     }
+
+    // Send confirmation email directly — bypasses PostgREST schema cache entirely.
+    supabase.functions.invoke("send-confirmation", {
+      body: {
+        type:             "DIRECT",
+        customer_name:    name,
+        customer_email:   email,
+        barber_name:      barberForBooking!.name,
+        service_name:     selectedService.name,
+        service_price:    selectedService.price,
+        location_name:    selectedLocation.name,
+        location_address: selectedLocation.address,
+        location_phone:   selectedLocation.phone,
+        booking_date:     selectedDate,
+        booking_time:     selectedTime,
+      },
+    }).catch(() => { /* email failure never blocks the booking */ });
+
     toast.success("Appointment booked successfully!");
     setStep(5);
   };
