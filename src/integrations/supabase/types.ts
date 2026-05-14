@@ -97,6 +97,7 @@ export type Database = {
           id: string
           location_id: string
           name: string
+          user_id: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -104,6 +105,7 @@ export type Database = {
           id?: string
           location_id: string
           name: string
+          user_id?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -111,6 +113,7 @@ export type Database = {
           id?: string
           location_id?: string
           name?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -214,13 +217,16 @@ export type Database = {
           barber_id: string
           booking_date: string
           booking_time: string
+          confirmation_sent_at: string | null
           created_at: string
+          customer_email: string | null
           customer_name: string
           customer_phone: string
           duration_at_booking: number | null
           id: string
           location_id: string
           price_at_booking: number | null
+          reminder_sent_at: string | null
           service_id: string
           status: string
         }
@@ -228,13 +234,16 @@ export type Database = {
           barber_id: string
           booking_date: string
           booking_time: string
+          confirmation_sent_at?: string | null
           created_at?: string
+          customer_email?: string | null
           customer_name: string
           customer_phone: string
           duration_at_booking?: number | null
           id?: string
           location_id: string
           price_at_booking?: number | null
+          reminder_sent_at?: string | null
           service_id: string
           status?: string
         }
@@ -243,12 +252,15 @@ export type Database = {
           booking_date?: string
           booking_time?: string
           created_at?: string
+          confirmation_sent_at?: string | null
+          customer_email?: string | null
           customer_name?: string
           customer_phone?: string
           duration_at_booking?: number | null
           id?: string
           location_id?: string
           price_at_booking?: number | null
+          reminder_sent_at?: string | null
           service_id?: string
           status?: string
         }
@@ -275,6 +287,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_logs: {
+        Row: {
+          id: string
+          booking_id: string | null
+          email_type: string
+          recipient: string
+          status: string
+          error_message: string | null
+          sent_at: string
+        }
+        Insert: {
+          id?: string
+          booking_id?: string | null
+          email_type: string
+          recipient: string
+          status: string
+          error_message?: string | null
+          sent_at?: string
+        }
+        Update: {
+          id?: string
+          booking_id?: string | null
+          email_type?: string
+          recipient?: string
+          status?: string
+          error_message?: string | null
+          sent_at?: string
+        }
+        Relationships: []
       }
       locations: {
         Row: {
@@ -353,6 +395,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_reminder_bookings: {
+        Args: Record<string, never>
+        Returns: {
+          id: string
+          customer_name: string
+          customer_email: string
+          customer_phone: string
+          booking_date: string
+          booking_time: string
+          price_at_booking: number | null
+          barber_name: string
+          service_name: string
+          location_name: string
+          location_address: string
+          location_phone: string
+        }[]
+      }
       get_booked_slots: {
         Args: { _barber_id: string; _date: string }
         Returns: {
@@ -369,7 +428,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "barber" | "user"
     }
     CompositeTypes: {
       [_ in never]: never

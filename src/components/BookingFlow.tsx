@@ -51,6 +51,9 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   const [selectedTime, setSelectedTime] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [isAnyBarber, setIsAnyBarber] = useState(false);
+  const [assignedBarber, setAssignedBarber] = useState<Barber | null>(null);
 
   // Cache static data with long staleTime
   const { data: locations = [] } = useQuery<Location[]>({
@@ -150,6 +153,25 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     },
     enabled: !!selectedLocation && !!selectedBarber && !!selectedDate,
     staleTime: 60 * 1000, // 1 min for availability
+  });
+
+  // All barbers' booked slots for "any barber" mode
+  const { data: allBarbersSlots = [] } = useQuery<{ id: string; booked: { time: string; dur: number }[] }[]>({
+    queryKey: ["all_barbers_slots", selectedDate, isAnyBarber, barbers.map(b => b.id).join(",")],
+    queryFn: async () => {
+      const results = await Promise.all(
+        barbers.map(b => supabase.rpc("get_booked_slots", { _barber_id: b.id, _date: selectedDate }))
+      );
+      return barbers.map((b, i) => ({
+        id: b.id,
+        booked: (results[i].data || []).map((s: any) => ({
+          time: trimTime(s.booking_time),
+          dur: s.duration_at_booking || 30,
+        })),
+      }));
+    },
+    enabled: isAnyBarber && !!selectedDate && barbers.length > 0,
+    staleTime: 30 * 1000,
   });
 
   // Fetch booked slots only when barber+date selected
@@ -267,9 +289,9 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
   const handleSubmit = async () => {
     if (!selectedLocation || !selectedService || !selectedBarber || !selectedDate || !selectedTime || !customerName || !customerPhone) return;
-    // Client-side validation (server enforces too)
     const name = customerName.trim();
     const phone = customerPhone.trim();
+    const email = customerEmail.trim().toLowerCase();
     if (name.length < 2 || name.length > 50) {
       toast.error("Name must be between 2 and 50 characters");
       return;
@@ -278,15 +300,35 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       toast.error("Enter a valid Greek phone (10 digits, starting with 69 or 2)");
       return;
     }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Enter a valid email address");
+      return;
+    }
+    // In "any barber" mode, pick the first barber with no conflict at this slot
+    let barberForBooking = selectedBarber;
+    if (isAnyBarber && allBarbersSlots.length > 0) {
+      const dur = selectedService.duration_minutes;
+      const start = toMin(selectedTime);
+      const freeEntry = allBarbersSlots.find(({ booked }) => {
+        const occ = new Set<string>();
+        booked.forEach(b => { for (let m = toMin(b.time); m < toMin(b.time) + b.dur; m += 30) occ.add(fromMin(m)); });
+        for (let m = start; m < start + dur; m += 30) { if (occ.has(fromMin(m))) return false; }
+        return true;
+      });
+      if (freeEntry) barberForBooking = barbers.find(b => b.id === freeEntry.id) ?? selectedBarber;
+    }
+    setAssignedBarber(barberForBooking);
+
     setSubmitting(true);
     const { error } = await supabase.from("bookings").insert({
       location_id: selectedLocation.id,
       service_id: selectedService.id,
-      barber_id: selectedBarber.id,
+      barber_id: barberForBooking!.id,
       booking_date: selectedDate,
       booking_time: selectedTime,
       customer_name: name,
       customer_phone: phone,
+      customer_email: email || null,
       // status, price_at_booking, duration_at_booking are set server-side by trigger
     });
     setSubmitting(false);
@@ -366,7 +408,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                 {barbers.length > 0 && (
                   <button
                     key="any-barber"
-                    onClick={() => { setSelectedBarber(barbers[0]); setStep(3); }}
+                    onClick={() => { setIsAnyBarber(true); setSelectedBarber(barbers[0]); setStep(3); }}
                     className="group text-left overflow-hidden rounded-2xl transition-all duration-[250ms] ease-out hover:-translate-y-1"
                     style={{ background: "#111", border: "1px solid rgba(255,255,255,0.08)" }}
                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
@@ -394,7 +436,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                   return (
                     <button
                       key={b.id}
-                      onClick={() => { setSelectedBarber(b); setStep(3); }}
+                      onClick={() => { setIsAnyBarber(false); setAssignedBarber(null); setSelectedBarber(b); setStep(3); }}
                       className={`group text-left overflow-hidden rounded-2xl transition-all duration-[250ms] ease-out hover:-translate-y-1 ${isSelected ? "ring-2 ring-foreground shadow-[inset_0_0_24px_rgba(255,255,255,0.08)]" : ""}`}
                       style={{
                         background: "#111",
@@ -451,19 +493,29 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                         <p className="col-span-full text-muted-foreground text-sm font-body">No available slots for this day.</p>
                       )}
                       {availableSlots.map((t) => {
-                        // Check if this slot OR any slot the chosen service would occupy is taken
                         const dur = selectedService?.duration_minutes || 30;
                         const start = toMin(t);
+                        const eff = getEffectiveHours(selectedDate);
                         let unavailable = false;
-                        for (let m = start; m < start + dur; m += 30) {
-                          const s = fromMin(m);
-                          if (occupiedSlots.has(s) || isSlotBlocked(selectedDate, s)) {
-                            unavailable = true;
-                            break;
+
+                        if (isAnyBarber && allBarbersSlots.length > 0) {
+                          // Unavailable only if NO barber is free for this slot
+                          const anyFree = allBarbersSlots.some(({ booked }) => {
+                            const occ = new Set<string>();
+                            booked.forEach(b => { for (let m = toMin(b.time); m < toMin(b.time) + b.dur; m += 30) occ.add(fromMin(m)); });
+                            for (let m = start; m < start + dur; m += 30) {
+                              if (occ.has(fromMin(m)) || isSlotBlocked(selectedDate, fromMin(m))) return false;
+                            }
+                            return true;
+                          });
+                          unavailable = !anyFree;
+                        } else {
+                          for (let m = start; m < start + dur; m += 30) {
+                            const s = fromMin(m);
+                            if (occupiedSlots.has(s) || isSlotBlocked(selectedDate, s)) { unavailable = true; break; }
                           }
                         }
-                        // Also block slots whose service-duration would exceed working hours
-                        const eff = getEffectiveHours(selectedDate);
+                        // Block slots whose service-duration would exceed working hours
                         if (eff && eff.is_working && start + dur > toMin(eff.end_time)) unavailable = true;
 
                         return (
@@ -507,7 +559,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                   <div className="space-y-2 text-sm font-body">
                     <div className="flex justify-between"><span className="text-muted-foreground">Location</span><span className="text-foreground">{selectedLocation?.name}</span></div>
                     <div className="flex justify-between"><span className="text-muted-foreground">Service</span><span className="text-foreground">{selectedService?.name} — €{selectedService?.price}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Barber</span><span className="text-foreground">{selectedBarber?.name}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Barber</span><span className="text-foreground">{isAnyBarber ? "First available" : selectedBarber?.name}</span></div>
                     <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="text-foreground">{selectedDate && format(new Date(selectedDate + "T00:00:00"), "EEEE, d MMMM yyyy")}</span></div>
                     <div className="flex justify-between"><span className="text-muted-foreground">Time</span><span className="text-foreground font-semibold">{selectedTime}</span></div>
                   </div>
@@ -531,6 +583,18 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                     />
                     <p className="text-xs text-muted-foreground mt-1 font-body">10 digits, starting with 69 or 2</p>
                   </div>
+                  <div>
+                    <label className="block text-sm text-muted-foreground font-body mb-1">
+                      Email Address <span className="text-muted-foreground/50">(optional — for confirmation &amp; reminder)</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors"
+                    />
+                  </div>
                 </div>
 
                 <motion.button onClick={handleSubmit} disabled={!customerName.trim() || !customerPhone.trim() || submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-foreground text-background font-body font-semibold py-4 text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
@@ -546,10 +610,10 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                 </div>
                 <h3 className="font-display text-4xl tracking-wider text-foreground mb-3">YOU'RE ALL SET</h3>
                 <p className="text-muted-foreground font-body mb-8">
-                  Your appointment with <span className="text-foreground">{selectedBarber?.name}</span> at <span className="text-foreground">{selectedLocation?.name}</span> is confirmed for{" "}
+                  Your appointment with <span className="text-foreground">{(assignedBarber ?? selectedBarber)?.name}</span> at <span className="text-foreground">{selectedLocation?.name}</span> is confirmed for{" "}
                   <span className="text-foreground">{selectedDate && format(new Date(selectedDate + "T00:00:00"), "d MMMM")} at {selectedTime}</span>.
                 </p>
-                <button onClick={() => { setStep(0); setSelectedLocation(null); setSelectedService(null); setSelectedBarber(null); setSelectedDate(""); setSelectedTime(""); setCustomerName(""); setCustomerPhone(""); }} className="font-body text-sm text-foreground underline hover:no-underline">
+                <button onClick={() => { setStep(0); setSelectedLocation(null); setSelectedService(null); setSelectedBarber(null); setSelectedDate(""); setSelectedTime(""); setCustomerName(""); setCustomerPhone(""); setCustomerEmail(""); setIsAnyBarber(false); setAssignedBarber(null); }} className="font-body text-sm text-foreground underline hover:no-underline">
                   Book another appointment
                 </button>
               </motion.div>
