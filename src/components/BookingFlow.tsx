@@ -337,7 +337,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       }
     );
 
-    const { error } = await supabaseWithEmail.from("bookings").insert({
+    let { error } = await supabaseWithEmail.from("bookings").insert({
       location_id: selectedLocation.id,
       service_id: selectedService.id,
       barber_id: barberForBooking!.id,
@@ -345,7 +345,21 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       booking_time: selectedTime,
       customer_name: name,
       customer_phone: phone,
+      customer_email: email,
     });
+
+    // If schema cache is stale, retry without the email column (header still carries it)
+    if (error?.message?.includes("customer_email")) {
+      ({ error } = await supabaseWithEmail.from("bookings").insert({
+        location_id: selectedLocation.id,
+        service_id: selectedService.id,
+        barber_id: barberForBooking!.id,
+        booking_date: selectedDate,
+        booking_time: selectedTime,
+        customer_name: name,
+        customer_phone: phone,
+      }));
+    }
 
     setSubmitting(false);
     if (error) {
