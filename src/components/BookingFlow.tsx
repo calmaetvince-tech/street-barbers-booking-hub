@@ -325,6 +325,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
     setSubmitting(true);
 
+    // Try with customer_email — works once PostgREST schema cache is reloaded
     let { error } = await supabase.from("bookings").insert({
       location_id: selectedLocation.id,
       service_id: selectedService.id,
@@ -335,6 +336,19 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       customer_phone: phone,
       customer_email: email,
     });
+
+    // Schema cache still stale — fall back to insert without email so booking never fails
+    if (error?.message?.includes("customer_email")) {
+      ({ error } = await supabase.from("bookings").insert({
+        location_id: selectedLocation.id,
+        service_id: selectedService.id,
+        barber_id: barberForBooking!.id,
+        booking_date: selectedDate,
+        booking_time: selectedTime,
+        customer_name: name,
+        customer_phone: phone,
+      }));
+    }
 
     setSubmitting(false);
     if (error) {
