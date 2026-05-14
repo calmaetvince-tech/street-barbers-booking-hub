@@ -320,44 +320,19 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     setAssignedBarber(barberForBooking);
 
     setSubmitting(true);
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
     let bookingError: string | null = null;
 
-    try {
-      const res = await fetch(`${supabaseUrl}/functions/v1/book-appointment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${supabaseKey}`,
-          "apikey": supabaseKey,
-        },
-        body: JSON.stringify({
-          location_id: selectedLocation.id,
-          service_id: selectedService.id,
-          barber_id: barberForBooking!.id,
-          booking_date: selectedDate,
-          booking_time: selectedTime,
-          customer_name: name,
-          customer_phone: phone,
-          customer_email: email || null,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok || json.error) bookingError = json.error || `HTTP ${res.status}`;
-    } catch {
-      // Network failure — fall back to direct insert (no customer_email due to PostgREST cache)
-      const { error } = await supabase.from("bookings").insert({
-        location_id: selectedLocation.id,
-        service_id: selectedService.id,
-        barber_id: barberForBooking!.id,
-        booking_date: selectedDate,
-        booking_time: selectedTime,
-        customer_name: name,
-        customer_phone: phone,
-      });
-      if (error) bookingError = error.code === "23505" ? "DUPLICATE" : (error.message || "unknown");
-    }
+    // Always use direct insert — reliable fallback while PostgREST cache is stale
+    const { error } = await supabase.from("bookings").insert({
+      location_id: selectedLocation.id,
+      service_id: selectedService.id,
+      barber_id: barberForBooking!.id,
+      booking_date: selectedDate,
+      booking_time: selectedTime,
+      customer_name: name,
+      customer_phone: phone,
+    });
+    if (error) bookingError = error.code === "23505" ? "DUPLICATE" : (error.message || "unknown");
 
     setSubmitting(false);
     if (bookingError) {
