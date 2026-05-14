@@ -158,3 +158,42 @@ export const ownerNotificationHtml = (d: BookingEmailData): string =>
     </tr>
     <tr><td style="padding:12px 40px 32px;"></td></tr>
   `)
+
+export const reviewEmailHtml = (d: BookingEmailData, reviewUrl: string): string =>
+  base('Thank You', `
+    <!-- Greeting -->
+    <tr>
+      <td style="padding:36px 40px 28px;text-align:center;border-bottom:1px solid #eee;">
+        <h2 style="margin:0 0 10px;font-size:20px;color:#111;font-weight:600;letter-spacing:-0.01em;">Thanks for your visit, ${d.customerName}.</h2>
+        <p style="margin:0;font-size:14px;color:#666;line-height:1.65;">We hope you enjoyed your experience at Street Barbers. If you have a moment, we'd love to hear what you think.</p>
+      </td>
+    </tr>
+
+    <!-- Details recap -->
+    <tr>
+      <td style="padding:28px 40px 8px;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          ${row('Service', d.serviceName)}
+          ${row('Barber', d.barberName)}
+          ${row('Date', d.date)}
+        </table>
+      </td>
+    </tr>
+
+    <!-- CTA -->
+    <tr>
+      <td style="padding:32px 40px;text-align:center;">
+        <p style="margin:0 0 20px;font-size:14px;color:#555;line-height:1.65;">Your feedback helps other customers find us and helps us keep improving.</p>
+        <a href="${reviewUrl}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:14px 36px;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:600;">Leave a Review</a>
+      </td>
+    </tr>
+
+    <!-- Thank you note -->
+    <tr>
+      <td style="padding:20px 40px 28px;background:#fafafa;border-top:1px solid #eee;border-bottom:1px solid #eee;">
+        <p style="margin:0;font-size:13px;color:#777;text-align:center;line-height:1.65;">
+          See you next time. Questions? Call us at <strong style="color:#111;">${d.locationPhone}</strong>.
+        </p>
+      </td>
+    </tr>
+  `)
