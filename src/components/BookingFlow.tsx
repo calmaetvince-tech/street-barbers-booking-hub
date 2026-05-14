@@ -322,8 +322,8 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     setSubmitting(true);
     let bookingError: string | null = null;
 
-    // Always use direct insert — reliable fallback while PostgREST cache is stale
-    const { error } = await supabase.from("bookings").insert({
+    // Try with customer_email first (works once PostgREST schema cache is fresh)
+    const payload: Record<string, unknown> = {
       location_id: selectedLocation.id,
       service_id: selectedService.id,
       barber_id: barberForBooking!.id,
@@ -331,7 +331,26 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       booking_time: selectedTime,
       customer_name: name,
       customer_phone: phone,
-    });
+      customer_email: email || null,
+    };
+    let { error } = await supabase.from("bookings").insert(payload);
+
+    // If schema cache still hasn't refreshed, retry without customer_email
+    if (error && error.message?.includes("customer_email")) {
+      const { email: _email, customer_email: _ce, ...payloadWithoutEmail } = payload as any;
+      void _email; void _ce;
+      const fallback = await supabase.from("bookings").insert({
+        location_id: selectedLocation.id,
+        service_id: selectedService.id,
+        barber_id: barberForBooking!.id,
+        booking_date: selectedDate,
+        booking_time: selectedTime,
+        customer_name: name,
+        customer_phone: phone,
+      });
+      error = fallback.error;
+    }
+
     if (error) bookingError = error.code === "23505" ? "DUPLICATE" : (error.message || "unknown");
 
     setSubmitting(false);
