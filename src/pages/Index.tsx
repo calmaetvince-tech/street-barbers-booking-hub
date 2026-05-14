@@ -29,7 +29,7 @@ const Index = () => {
                 <BarberPole3D />
               </div>
             </Suspense>
-            <span className="text-[13px] sm:text-xl tracking-[0.1em] sm:tracking-widest text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}>STREET BARBERS</span>
+            <span className="text-[17px] sm:text-xl tracking-[0.18em] sm:tracking-widest text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}>STREET BARBERS</span>
           </div>
           <div className="hidden md:flex items-center gap-8 font-body text-xs uppercase tracking-widest text-muted-foreground">
             <a href="#services" className="hover:text-foreground transition-colors">Services</a>
