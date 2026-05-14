@@ -12,15 +12,11 @@ import {
   type BookingEmailData,
 } from '../_shared/email-templates.ts'
 
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? 're_UpAbzN8r_JgjYpDCKWfXZK3fCUtvghQq5'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'onboarding@resend.dev'
 const CRON_SECRET = Deno.env.get('CRON_SECRET')
-
-if (!RESEND_API_KEY) {
-  console.error('RESEND_API_KEY env var is not set — reminders will not send')
-}
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
@@ -33,8 +29,6 @@ function formatDate(dateStr: string): string {
 }
 
 async function sendEmail(to: string, subject: string, html: string): Promise<void> {
-  if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY missing')
-
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {

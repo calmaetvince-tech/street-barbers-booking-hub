@@ -15,17 +15,13 @@ import {
 } from '../_shared/email-templates.ts'
 
 // ─── env (no fallbacks for secrets) ──────────────────────────────────────────
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? 're_UpAbzN8r_JgjYpDCKWfXZK3fCUtvghQq5'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 const OWNER_EMAIL = Deno.env.get('OWNER_EMAIL') ?? 'calmaetvince@gmail.com'
 const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'onboarding@resend.dev'
 const WEBHOOK_SECRET = Deno.env.get('BOOKING_WEBHOOK_SECRET')
-
-if (!RESEND_API_KEY) {
-  console.error('RESEND_API_KEY env var is not set — emails will not send')
-}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -44,8 +40,6 @@ function formatDate(dateStr: string): string {
 }
 
 async function sendEmail(to: string, subject: string, html: string): Promise<void> {
-  if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY missing')
-
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
