@@ -370,6 +370,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       body: {
         type:             "DIRECT",
         booking_id:       bookingId,
+        barber_id:        barberForBooking!.id,
         customer_name:    name,
         customer_email:   email,
         barber_name:      barberForBooking!.name,
