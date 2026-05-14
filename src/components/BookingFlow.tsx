@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Scissors, User, CalendarDays, Check, ChevronLeft, Phone, Loader2, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { createClient } from "@supabase/supabase-js";
 import { format, addDays, startOfToday } from "date-fns";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
@@ -325,8 +326,18 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
     setSubmitting(true);
 
-    // Try with customer_email — works once PostgREST schema cache is reloaded
-    let { error } = await supabase.from("bookings").insert({
+    // Pass email via request header so the DB trigger can extract it
+    // even while PostgREST's schema cache doesn't yet know the customer_email column.
+    const supabaseWithEmail = createClient(
+      import.meta.env.VITE_SUPABASE_URL as string,
+      import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
+      {
+        global: { headers: { "x-customer-email": email } },
+        auth: { storage: localStorage, persistSession: true, autoRefreshToken: true },
+      }
+    );
+
+    const { error } = await supabaseWithEmail.from("bookings").insert({
       location_id: selectedLocation.id,
       service_id: selectedService.id,
       barber_id: barberForBooking!.id,
@@ -334,21 +345,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       booking_time: selectedTime,
       customer_name: name,
       customer_phone: phone,
-      customer_email: email,
     });
-
-    // Schema cache still stale — fall back to insert without email so booking never fails
-    if (error?.message?.includes("customer_email")) {
-      ({ error } = await supabase.from("bookings").insert({
-        location_id: selectedLocation.id,
-        service_id: selectedService.id,
-        barber_id: barberForBooking!.id,
-        booking_date: selectedDate,
-        booking_time: selectedTime,
-        customer_name: name,
-        customer_phone: phone,
-      }));
-    }
 
     setSubmitting(false);
     if (error) {
