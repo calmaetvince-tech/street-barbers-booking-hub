@@ -333,7 +333,9 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     });
     setSubmitting(false);
     if (error) {
+      console.error("Booking error:", error);
       if (error.code === "23505") toast.error("This time slot was just booked. Please choose another.");
+      else if (error.message) toast.error(error.message);
       else toast.error("Booking failed. Please try again.");
       return;
     }
