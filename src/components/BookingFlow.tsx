@@ -288,7 +288,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   })();
 
   const handleSubmit = async () => {
-    if (!selectedLocation || !selectedService || !selectedBarber || !selectedDate || !selectedTime || !customerName || !customerPhone) return;
+    if (!selectedLocation || !selectedService || !selectedBarber || !selectedDate || !selectedTime || !customerName || !customerPhone || !customerEmail) return;
     const name = customerName.trim();
     const phone = customerPhone.trim();
     const email = customerEmail.trim().toLowerCase();
@@ -300,7 +300,11 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       toast.error("Enter a valid Greek phone (10 digits, starting with 69 or 2)");
       return;
     }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!email) {
+      toast.error("Email address is required");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("Enter a valid email address");
       return;
     }
@@ -320,10 +324,8 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     setAssignedBarber(barberForBooking);
 
     setSubmitting(true);
-    let bookingError: string | null = null;
 
-    // Try with customer_email first (works once PostgREST schema cache is fresh)
-    const payload: Record<string, unknown> = {
+    let { error } = await supabase.from("bookings").insert({
       location_id: selectedLocation.id,
       service_id: selectedService.id,
       barber_id: barberForBooking!.id,
@@ -331,33 +333,14 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       booking_time: selectedTime,
       customer_name: name,
       customer_phone: phone,
-      customer_email: email || null,
-    };
-    let { error } = await supabase.from("bookings").insert(payload);
-
-    // If schema cache still hasn't refreshed, retry without customer_email
-    if (error && error.message?.includes("customer_email")) {
-      const { email: _email, customer_email: _ce, ...payloadWithoutEmail } = payload as any;
-      void _email; void _ce;
-      const fallback = await supabase.from("bookings").insert({
-        location_id: selectedLocation.id,
-        service_id: selectedService.id,
-        barber_id: barberForBooking!.id,
-        booking_date: selectedDate,
-        booking_time: selectedTime,
-        customer_name: name,
-        customer_phone: phone,
-      });
-      error = fallback.error;
-    }
-
-    if (error) bookingError = error.code === "23505" ? "DUPLICATE" : (error.message || "unknown");
+      customer_email: email,
+    });
 
     setSubmitting(false);
-    if (bookingError) {
-      console.error("Booking error:", bookingError);
-      if (bookingError === "DUPLICATE" || bookingError.includes("23505")) toast.error("This time slot was just booked. Please choose another.");
-      else toast.error(bookingError);
+    if (error) {
+      console.error("Booking error:", error);
+      if (error.code === "23505") toast.error("This time slot was just booked. Please choose another.");
+      else toast.error(error.message || "Booking failed. Please try again.");
       return;
     }
     toast.success("Appointment booked successfully!");
@@ -608,7 +591,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                   </div>
                   <div>
                     <label className="block text-sm text-muted-foreground font-body mb-1">
-                      Email Address <span className="text-muted-foreground/50">(optional — for confirmation &amp; reminder)</span>
+                      Email Address <span className="text-muted-foreground/50">(confirmation &amp; reminder will be sent here)</span>
                     </label>
                     <input
                       type="email"
@@ -620,7 +603,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                   </div>
                 </div>
 
-                <motion.button onClick={handleSubmit} disabled={!customerName.trim() || !customerPhone.trim() || submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-foreground text-background font-body font-semibold py-4 text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                <motion.button onClick={handleSubmit} disabled={!customerName.trim() || !customerPhone.trim() || !customerEmail.trim() || submitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-foreground text-background font-body font-semibold py-4 text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                   {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Booking...</> : "Confirm Booking"}
                 </motion.button>
               </motion.div>
