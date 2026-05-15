@@ -427,7 +427,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
             {step === 0 && (
               <motion.div key="loc" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-2 gap-4">
                 {locations.map((loc) => (
-                  <button key={loc.id} onClick={() => { setSelectedLocation(loc); setStep(1); }} className="bg-card border border-border p-6 text-left hover:border-foreground/30 transition-all group">
+                  <button key={loc.id} onClick={() => { setSelectedLocation(loc); setStep(1); }} className="bg-[#111] border border-border p-6 text-left hover:border-foreground/30 transition-all group">
                     <MapPin className="w-5 h-5 text-foreground mb-3" />
                     <h3 className="font-display text-xl tracking-wider text-foreground">{loc.name}</h3>
                     <p className="text-muted-foreground text-sm mt-1 font-body">{loc.address}</p>
@@ -440,7 +440,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
             {step === 1 && (
               <motion.div key="svc" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="grid sm:grid-cols-3 gap-4">
                 {services.map((svc) => (
-                  <button key={svc.id} onClick={() => { setSelectedService(svc); setStep(2); }} className="bg-card border border-border p-6 text-center hover:border-foreground/30 transition-all">
+                  <button key={svc.id} onClick={() => { setSelectedService(svc); setStep(2); }} className="bg-[#111] border border-border p-6 text-center hover:border-foreground/30 transition-all">
                     <h3 className="font-display text-xl tracking-wider text-foreground">{svc.name}</h3>
                     <p className="font-body text-2xl font-light text-foreground mt-3">€{svc.price}</p>
                     <p className="text-muted-foreground text-xs mt-1 font-body">{svc.duration_minutes} min</p>
@@ -522,7 +522,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                     {dates.map((d) => {
                       const dateObj = new Date(d + "T00:00:00");
                       return (
-                        <button key={d} onClick={() => { setSelectedDate(d); setSelectedTime(""); }} className={`flex-shrink-0 w-16 py-3 text-center font-body text-sm transition-all border ${selectedDate === d ? "bg-foreground text-background border-foreground" : "bg-card border-border text-foreground hover:border-foreground/30"}`}>
+                        <button key={d} onClick={() => { setSelectedDate(d); setSelectedTime(""); }} className={`flex-shrink-0 w-16 py-3 text-center font-body text-sm transition-all border ${selectedDate === d ? "bg-foreground text-background border-foreground" : "bg-[#111] border-border text-foreground hover:border-foreground/30"}`}>
                           <span className="block text-xs opacity-70">{format(dateObj, "EEE")}</span>
                           <span className="block font-semibold">{format(dateObj, "d")}</span>
                           <span className="block text-xs opacity-70">{format(dateObj, "MMM")}</span>
@@ -576,7 +576,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                                 ? "bg-secondary/30 text-muted-foreground/60 border-border/50 cursor-not-allowed line-through opacity-50 pointer-events-none"
                                 : selectedTime === t
                                 ? "bg-foreground text-background border-foreground transition-all"
-                                : "bg-card border-border text-foreground hover:border-foreground/30 hover:bg-secondary/40 transition-all cursor-pointer"
+                                : "bg-[#111] border-border text-foreground hover:border-foreground/30 hover:bg-white/[0.04] transition-all cursor-pointer"
                             }`}
                           >
                             {unavailable && (
@@ -601,7 +601,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
             {step === 4 && (
               <motion.div key="confirm" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
-                <div className="bg-card border border-border p-5 sm:p-6 space-y-3">
+                <div className="bg-[#111] border border-border p-5 sm:p-6 space-y-3">
                   <p className="text-sm text-muted-foreground font-body">Booking Summary</p>
                   <div className="space-y-2 text-sm font-body">
                     <div className="flex justify-between gap-3"><span className="text-muted-foreground shrink-0">Location</span><span className="text-foreground text-right">{selectedLocation?.name}</span></div>
@@ -615,7 +615,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm text-muted-foreground font-body mb-1">Your Name</label>
-                    <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="John Doe" className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors" />
+                    <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="John Doe" className="w-full bg-[#111] border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors" />
                   </div>
                   <div>
                     <label className="block text-sm text-muted-foreground font-body mb-1">Phone Number</label>
@@ -626,7 +626,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                       placeholder="6941234567"
-                      className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors"
+                      className="w-full bg-[#111] border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors"
                     />
                     <p className="text-xs text-muted-foreground mt-1 font-body">10 digits, starting with 69 or 2</p>
                   </div>
@@ -639,7 +639,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="w-full bg-card border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors"
+                      className="w-full bg-[#111] border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/50 transition-colors"
                     />
                   </div>
                 </div>
