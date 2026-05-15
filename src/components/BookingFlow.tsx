@@ -157,7 +157,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
   });
 
   // All barbers' booked slots for "any barber" mode
-  const { data: allBarbersSlots = [] } = useQuery<{ id: string; booked: { time: string; dur: number }[] }[]>({
+  const { data: allBarbersSlots = [] } = useQuery<{ id: string; booked: { time: string }[] }[]>({
     queryKey: ["all_barbers_slots", selectedDate, isAnyBarber, barbers.map(b => b.id).join(",")],
     queryFn: async () => {
       const results = await Promise.all(
@@ -167,7 +167,6 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
         id: b.id,
         booked: (results[i].data || []).map((s: any) => ({
           time: trimTime(s.booking_time),
-          dur: s.duration_at_booking || 30,
         })),
       }));
     },
@@ -203,11 +202,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
   const occupiedSlots = new Set<string>();
   bookedSlots.forEach((b) => {
-    const start = toMin(b.booking_time);
-    const dur = b.duration_at_booking || 30;
-    for (let m = start; m < start + dur; m += 30) {
-      occupiedSlots.add(fromMin(m));
-    }
+    occupiedSlots.add(b.booking_time);
   });
 
   const isDateBlocked = useCallback((dateStr: string) => {
@@ -313,13 +308,9 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     // In "any barber" mode, pick the first barber with no conflict at this slot
     let barberForBooking = selectedBarber;
     if (isAnyBarber && allBarbersSlots.length > 0) {
-      const dur = selectedService.duration_minutes;
-      const start = toMin(selectedTime);
       const freeEntry = allBarbersSlots.find(({ booked }) => {
-        const occ = new Set<string>();
-        booked.forEach(b => { for (let m = toMin(b.time); m < toMin(b.time) + b.dur; m += 30) occ.add(fromMin(m)); });
-        for (let m = start; m < start + dur; m += 30) { if (occ.has(fromMin(m))) return false; }
-        return true;
+        const occ = new Set(booked.map(b => b.time));
+        return !occ.has(selectedTime);
       });
       if (freeEntry) barberForBooking = barbers.find(b => b.id === freeEntry.id) ?? selectedBarber;
     }
@@ -546,30 +537,21 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
                         <p className="col-span-full text-muted-foreground text-sm font-body">No available slots for this day.</p>
                       )}
                       {availableSlots.map((t) => {
-                        const dur = selectedService?.duration_minutes || 30;
                         const start = toMin(t);
                         const eff = getEffectiveHours(selectedDate);
                         let unavailable = false;
 
                         if (isAnyBarber && allBarbersSlots.length > 0) {
-                          // Unavailable only if NO barber is free for this slot
                           const anyFree = allBarbersSlots.some(({ booked }) => {
-                            const occ = new Set<string>();
-                            booked.forEach(b => { for (let m = toMin(b.time); m < toMin(b.time) + b.dur; m += 30) occ.add(fromMin(m)); });
-                            for (let m = start; m < start + dur; m += 30) {
-                              if (occ.has(fromMin(m)) || isSlotBlocked(selectedDate, fromMin(m))) return false;
-                            }
-                            return true;
+                            const occ = new Set(booked.map(b => b.time));
+                            return !occ.has(t) && !isSlotBlocked(selectedDate, t);
                           });
                           unavailable = !anyFree;
                         } else {
-                          for (let m = start; m < start + dur; m += 30) {
-                            const s = fromMin(m);
-                            if (occupiedSlots.has(s) || isSlotBlocked(selectedDate, s)) { unavailable = true; break; }
-                          }
+                          unavailable = occupiedSlots.has(t) || isSlotBlocked(selectedDate, t);
                         }
-                        // Block slots whose service-duration would exceed working hours
-                        if (eff && eff.is_working && start + dur > toMin(eff.end_time)) unavailable = true;
+                        // Block last slot if it would exceed working hours
+                        if (eff && eff.is_working && start + 30 > toMin(eff.end_time)) unavailable = true;
 
                         return (
                           <button
