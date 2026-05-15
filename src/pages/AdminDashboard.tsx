@@ -84,7 +84,19 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    if (isAdmin) fetchAll();
+    if (!isAdmin) return;
+    fetchAll();
+
+    const channel = supabase
+      .channel("admin-bookings")
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "bookings",
+      }, () => { fetchAll(); })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [isAdmin]);
 
   const fetchAll = async () => {
