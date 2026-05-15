@@ -172,11 +172,11 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     },
     enabled: isAnyBarber && !!selectedDate && barbers.length > 0,
     staleTime: 0,
-    refetchOnMount: true,
+    gcTime: 0,
   });
 
-  // Fetch booked slots only when barber+date selected
-  const { data: bookedSlots = [] } = useQuery<{ booking_time: string; duration_at_booking: number | null }[]>({
+  // Fetch booked slots only when barber+date selected — never cached
+  const { data: bookedSlots = [], refetch: refetchSlots } = useQuery<{ booking_time: string; duration_at_booking: number | null }[]>({
     queryKey: ["booked_slots", selectedBarber?.id, selectedDate],
     queryFn: async () => {
       const { data } = await supabase.rpc("get_booked_slots", {
@@ -190,8 +190,15 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
     },
     enabled: !!selectedBarber && !!selectedDate,
     staleTime: 0,
-    refetchOnMount: true,
+    gcTime: 0,
   });
+
+  // Force-refetch availability every time user arrives at the date/time step
+  useEffect(() => {
+    if (step === 3 && selectedBarber && selectedDate) {
+      refetchSlots();
+    }
+  }, [step, selectedBarber?.id, selectedDate]);
 
   // Build a Set of every 30-min slot that is occupied (accounting for service duration)
   const toMin = (t: string) => {
