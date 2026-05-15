@@ -4,7 +4,7 @@ import { MapPin, Scissors, User, CalendarDays, Check, ChevronLeft, Phone, Loader
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays, startOfToday } from "date-fns";
 import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type Location = { id: string; name: string; address: string; phone: string };
 type Service = { id: string; name: string; price: number; duration_minutes: number };
@@ -41,6 +41,7 @@ const generateSlots = (start: string, end: string): string[] => {
 };
 
 const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
+  const queryClient = useQueryClient();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
@@ -171,14 +172,14 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       }));
     },
     enabled: isAnyBarber && !!selectedDate && barbers.length > 0,
-    staleTime: 30 * 1000,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   // Fetch booked slots only when barber+date selected
   const { data: bookedSlots = [] } = useQuery<{ booking_time: string; duration_at_booking: number | null }[]>({
     queryKey: ["booked_slots", selectedBarber?.id, selectedDate],
     queryFn: async () => {
-      // Public RPC that returns only time + duration (no PII)
       const { data } = await supabase.rpc("get_booked_slots", {
         _barber_id: selectedBarber!.id,
         _date: selectedDate,
@@ -189,7 +190,8 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
       }));
     },
     enabled: !!selectedBarber && !!selectedDate,
-    staleTime: 30 * 1000, // 30s for real-time accuracy
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   // Build a Set of every 30-min slot that is occupied (accounting for service duration)
@@ -383,6 +385,10 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
         booking_time:     selectedTime,
       },
     }).catch(() => {});
+
+    // Invalidate slot caches so re-visiting the same date shows the slot as taken
+    queryClient.invalidateQueries({ queryKey: ["booked_slots"] });
+    queryClient.invalidateQueries({ queryKey: ["all_barbers_slots"] });
 
     toast.success("Appointment booked successfully!");
     setStep(5);
