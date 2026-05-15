@@ -223,7 +223,7 @@ const BookingFlow = forwardRef<HTMLDivElement>((_, ref) => {
 
   const isSlotBlocked = useCallback((dateStr: string, time: string) => {
     return blockedTimeSlots.some((bts) => {
-      if (bts.blocked_date !== dateStr || bts.blocked_time !== time) return false;
+      if (bts.blocked_date !== dateStr || trimTime(bts.blocked_time) !== time) return false;
       const locMatch = !bts.location_id || bts.location_id === selectedLocation?.id;
       const barberMatch = !bts.barber_id || bts.barber_id === selectedBarber?.id;
       return locMatch && barberMatch;

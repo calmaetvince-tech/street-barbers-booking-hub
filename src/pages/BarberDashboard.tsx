@@ -460,8 +460,21 @@ const BarberDashboard = () => {
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
   useEffect(() => {
-    if (barber) fetchAll();
-  }, [barber]);
+    if (!barber) return;
+    fetchAll();
+
+    const channel = supabase
+      .channel(`barber-bookings-${barber.id}`)
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "bookings",
+        filter: `barber_id=eq.${barber.id}`,
+      }, () => { fetchAll(); })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [barber?.id]);
 
   const fetchAll = async () => {
     if (!barber) return;

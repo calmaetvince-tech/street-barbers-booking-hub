@@ -52,7 +52,7 @@ const ServicesSection = ({ onBookService }: ServicesSectionProps) => {
 
               {/* Right: price */}
               <div className="w-24 sm:w-28 flex items-center justify-center px-4">
-                <span className="font-body font-bold text-foreground text-2xl sm:text-3xl">
+                <span className="font-body font-bold text-foreground text-lg sm:text-xl">
                   {service.price}
                 </span>
               </div>
