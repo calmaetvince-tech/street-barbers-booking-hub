@@ -51,7 +51,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
     <section className="relative overflow-hidden flex flex-col lg:block pt-0 mt-0 lg:pt-16 lg:h-[55.81vw] lg:w-screen bg-[#0a0a0a] lg:bg-[#1a1a1a]">
       <h1
-        className="lg:hidden text-sm sm:text-base tracking-[0.25em] text-white leading-none text-center pt-24 pb-3 px-4 bg-black"
+        className="lg:hidden text-base sm:text-lg tracking-[0.25em] text-white leading-none text-center pt-24 pb-3 px-4 bg-black"
         style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}
       >
         STREET BARBERS
@@ -172,7 +172,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
               </div>
             </motion.div>
 
-            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body mt-2 md:mt-0 tagline-glow-all">
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground text-xs md:text-sm font-body -mt-4 md:mt-0 tagline-glow-all">
               <span>Mon–Sat 10:00–21:00</span>
             </div>
           </div>
