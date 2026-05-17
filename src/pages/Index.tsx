@@ -48,8 +48,8 @@ const Index = () => {
       </nav>
 
       <HeroSection onBookNow={scrollToBooking} />
-      <ServicesSection onBookService={scrollToBooking} />
       <BookingFlow ref={bookingRef} />
+      <ServicesSection onBookService={scrollToBooking} />
 
       <section className="py-24 md:py-32 bg-background" id="team">
         <motion.div
